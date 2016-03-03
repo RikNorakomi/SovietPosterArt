@@ -43,7 +43,6 @@ import sovietPosterArt.utils.TypefaceUtil;
  */
 public class ArtWorkDetailViewActivity extends GenericActivity {
 
-    private static final float SCRIM_ADJUSTMENT = 0.075f;
     private final String TAG = getClass().getSimpleName();
     private boolean mShowUI;
     private boolean mGestureFlagSystemUiBecameVisible;

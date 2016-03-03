@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "norakomi.recyclerwithtranslucentbars"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    supportLibVersion = '23.1.1'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:palette-v7:${supportLibVersion}"
+    compile "com.android.support:support-annotations:${supportLibVersion}"
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1' // used for artwork detail screen
+
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2' // plugin to covert json results into a Data Access Object (DAO)
+
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
+}
+
+/**
+ * Info on Retrofit:
+ * -http://square.github.io/retrofit/
+ * -http://inthecheesefactory.com/blog/retrofit-2.0/en
+ * -https://futurestud.io/blog/retrofit-2-upgrade-guide-from-1-9
+ * -https://realm.io/news/droidcon-jake-wharton-simple-http-retrofit-2/  // with video
+ * -http://www.iayon.com/consuming-rest-api-with-retrofit-2-0-in-android/
+ * Retrofit json results may be converted into objects using gson
+ * */
+
+

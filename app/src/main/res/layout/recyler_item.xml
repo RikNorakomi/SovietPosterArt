@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/recycler_background_black"
+              android:orientation="vertical"
+              android:padding="2dp">
+
+    <TextView
+        android:id="@+id/recyler_dummy_textView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"/>
+
+    <ImageView
+        android:id="@+id/recycler_image_view"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:gravity="center"/>
+
+
+</LinearLayout>

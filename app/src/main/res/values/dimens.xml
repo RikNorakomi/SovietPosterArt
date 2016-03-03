@@ -1,0 +1,36 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="art_detail_button_width">56dp</dimen>
+    <dimen name="art_detail_button_height">72dp</dimen>
+
+    <dimen name="art_detail_full_screen_button_width">48dp</dimen>
+    <dimen name="art_detail_full_screen_button_height">48dp</dimen>
+
+    <dimen name="padding_bottom_art_detail">24dp</dimen>
+
+
+    <!-- ** ArtWork Detail Screen Dimension ** -->
+
+    <!-- artwork attribution dimensions -->
+    <dimen name="art_detail_attribution_text_size">14sp</dimen>
+    <dimen name="art_detail_metadata_margin">16dp</dimen>
+    <dimen name="art_detail_info_margin">16dp</dimen>
+    <dimen name="art_detail_attribution_title_margin">-12sp</dimen>
+
+    <!-- title dimensions-->
+    <dimen name="art_detail_title_text_size">28sp</dimen>
+    <dimen name="art_detail_title_bottom_padding">16sp</dimen>
+    <dimen name="art_detail_title_byline_margin">-16sp</dimen>
+
+    <!-- byline dimensions -->
+    <dimen name="art_detail_byline_text_size">22sp</dimen>
+    <dimen name="art_detail_metadata_margin_bottom">20dp</dimen>
+    <dimen name="art_detail_padding_left">12dp</dimen>
+    <dimen name="art_detail_padding_top">16dp</dimen>
+    <dimen name="padding_normal">16dp</dimen>
+    <dimen name="z_fab_over_touchable_app_bar">9dp</dimen>
+
+</resources>

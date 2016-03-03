@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"> <!-- setting flag to true limit layout to fit within status & navigation bars-->
+
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <!-- We're 'faking' a toolbar here as we just want a back button.
+         This approach lets the borderless ripple extend beyond the back button's bounds,
+         toolbar clips it. Wrapping layout needed for the ripple. -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="@dimen/z_fab_over_touchable_app_bar">
+
+        <!-- animate alpha in DribbleShot#enterAnimation
+             margins push out parent for the borderless ripple -->
+        <!--<ImageButton-->
+        <!--android:id="@+id/back_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="top|start"-->
+        <!--android:layout_marginStart="@dimen/art_detail_padding_left"-->
+        <!--android:layout_marginTop="@dimen/art_detail_padding_top"/>-->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="?android:actionBarSize"
+            android:layout_height="?android:actionBarSize"
+            android:layout_marginBottom="@dimen/padding_normal"
+            android:layout_marginEnd="@dimen/padding_normal"
+            android:alpha="0"
+            android:background="@drawable/mid_grey_ripple"
+            android:src="@drawable/ic_arrow_back"/>
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:id="@+id/art_work_info_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/padding_bottom_art_detail"
+            android:paddingTop="192dp"> <!-- extend gradient -->
+
+
+            <LinearLayout
+                android:id="@+id/art_work_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/art_detail_title_byline_margin"
+                    android:paddingBottom="@dimen/art_detail_title_bottom_padding"
+                    android:paddingEnd="@dimen/art_detail_metadata_margin"
+                    android:paddingStart="@dimen/art_detail_metadata_margin"
+                    android:paddingTop="@dimen/art_detail_metadata_margin"
+                    android:shadowColor="#8000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="title text"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/art_detail_title_text_size"/>
+
+                <TextView
+                    android:id="@+id/artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/art_detail_metadata_margin"
+                    android:paddingStart="@dimen/art_detail_info_margin"
+                    android:shadowColor="#8000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="artist text"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/art_detail_byline_text_size"/>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="@dimen/art_detail_button_width"
+            android:layout_height="@dimen/art_detail_button_height"
+            android:background="?selectableItemBackgroundBorderless"
+            android:scaleType="center"
+            android:src="@drawable/ic_fullscreen_exit_white_24dp"
+            android:visibility="invisible"/>
+
+        <ImageButton
+            android:id="@+id/overflow_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_bottom_art_detail"
+            android:paddingEnd="@dimen/art_detail_metadata_margin"
+            android:paddingStart="@dimen/art_detail_info_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_overflow"
+            android:scaleType="center"
+            android:contentDescription="more options"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="top"
+        android:background="@android:color/transparent"
+        />
+
+    <View
+        android:id="@+id/navigation_bar_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="top"
+        android:background="@android:color/transparent"
+        />
+
+</FrameLayout>

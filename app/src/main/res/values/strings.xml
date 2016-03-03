@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SovietPosterArt</string>
+    <string name="shared_prefs_file_name">norakomi.sovietPosterArt</string>
+</resources>

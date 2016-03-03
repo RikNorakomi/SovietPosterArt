@@ -32,8 +32,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private String[] urlArray;
     private Activity mParentActivity = null;
 
-    public RecyclerAdapter(Activity parentACtivity) {
-        mParentActivity = parentACtivity;
+    public RecyclerAdapter(Activity parentActivity) {
+        mParentActivity = parentActivity;
 
         String[] url = {
                 "http://sovietart.me/img/posters/600px/0200.jpg",
@@ -61,6 +61,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             urlArray[i] = randomUrl;
 //            Log.e("url=", url[randomIndexNumber]);
         }
+    }
+
+    public void setArtWorkCollection(){
+
     }
 
     @Override

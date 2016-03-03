@@ -1,4 +1,4 @@
-package sovietPosterArt.data.model;
+package sovietPosterArt.data.api.rijksmuseum.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

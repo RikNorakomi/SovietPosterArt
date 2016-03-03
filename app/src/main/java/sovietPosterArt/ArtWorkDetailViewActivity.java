@@ -69,7 +69,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
         mShowUI = true;
         String imageUrl = getIntent().getStringExtra(Constants.ART_WORK_URL);
-//        String imageUrl = "http://sovietart.me/img/posters/600px/0215.jpg";
 
         mContainerView.setOnClickListener(v -> {
             mShowUI = !mShowUI;

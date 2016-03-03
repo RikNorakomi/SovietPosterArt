@@ -1,4 +1,4 @@
-package sovietPosterArt.data;
+package sovietPosterArt.data.api.rijksmuseum;
 
 import android.support.annotation.StringDef;
 
@@ -9,8 +9,8 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.http.Query;
 import retrofit2.http.GET;
-import sovietPosterArt.data.model.ArtistsResponse;
-import sovietPosterArt.data.model.PaintingsResponse;
+import sovietPosterArt.data.api.rijksmuseum.model.ArtistsResponse;
+import sovietPosterArt.data.api.rijksmuseum.model.PaintingsResponse;
 
 /**
  * The RijksMuseum has API's available for the following elements:

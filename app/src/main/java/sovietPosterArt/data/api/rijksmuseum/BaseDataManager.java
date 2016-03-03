@@ -1,4 +1,4 @@
-package sovietPosterArt.data;
+package sovietPosterArt.data.api.rijksmuseum;
 
 import retrofit2.Retrofit;
 

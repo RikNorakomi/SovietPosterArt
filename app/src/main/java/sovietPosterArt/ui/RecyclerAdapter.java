@@ -18,59 +18,35 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import sovietPosterArt.ArtWorkDetailViewActivity;
+import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
-    private String[] urlArray;
     private Activity mParentActivity = null;
+    private ArrayList<Poster> mPosters = new ArrayList<>();
 
     public RecyclerAdapter(Activity parentActivity) {
         mParentActivity = parentActivity;
-
-        String[] url = {
-                "http://sovietart.me/img/posters/600px/0200.jpg",
-                "http://sovietart.me/img/posters/600px/0196.jpg",
-                "http://sovietart.me/img/posters/600px/0215.jpg",
-                "http://sovietart.me/img/posters/600px/0333.jpg",
-                "http://sovietart.me/img/posters/600px/0414.jpg",
-                "http://sovietart.me/img/posters/600px/0412.jpg",
-                "http://sovietart.me/img/posters/600px/0411.jpg",
-                "http://sovietart.me/img/posters/600px/0403.jpg",
-                "http://sovietart.me/img/posters/600px/0388.jpg",
-                "http://sovietart.me/img/posters/600px/0323.jpg",
-                "http://sovietart.me/img/posters/600px/0327.jpg",
-                "http://sovietart.me/img/posters/600px/0357.jpg",
-        };
-
-        urlArray = new String[getItemCount()];
-        Random rand = new Random();
-        for (int i = 0; i < urlArray.length; i++) {
-//            int randomIndexNumber = new Random().nextInt(url.length);
-
-            int randomNum = rand.nextInt((414 - 96) + 1) + 96;
-            String randomUrl = "http://sovietart.me/img/posters/600px/0" + randomNum + ".jpg";
-
-            urlArray[i] = randomUrl;
-//            Log.e("url=", url[randomIndexNumber]);
-        }
     }
 
-    public void setArtWorkCollection(){
-
+    public void setArtWorkCollection(ArrayList<Poster> data) {
+        App.log(TAG, "setting ArtWorkCollection with postersize = " + data.size());
+        mPosters.clear();
+        mPosters.addAll(data);
+        notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyler_item, null);
-
         return new ViewHolder(view);
     }
 
@@ -79,9 +55,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         TextView tv = holder.artWorkDummyText;
         tv.setText("view #" + (position + 1));
 
-        Log.e("Glide trying to load: ", urlArray[position]);
+        //todo: implement abstraction layer
+
+        if (mPosters.isEmpty()) return;
+
+        App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
+
         Glide.with(mParentActivity)
-                .load(urlArray[position])
+                .load(mPosters.get(position).getImageUrl())
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -106,8 +87,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        final int fixedDummyViews = 30;
-        return fixedDummyViews;
+        return mPosters.size();
+//        final int fixedDummyViews = 30;
+//        return fixedDummyViews;
     }
 
 
@@ -121,11 +103,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             artWorkImage.setOnClickListener(view -> {
-                App.log(TAG, urlArray[getLayoutPosition()]);
-
                 artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
                 Intent intent = new Intent(mParentActivity, ArtWorkDetailViewActivity.class);
-                intent.putExtra(Constants.ART_WORK_URL, urlArray[getLayoutPosition()]);
+                intent.putExtra(Constants.ART_WORK_URL, mPosters.get(getLayoutPosition()).getImageUrl());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 ActivityOptions options =
                         ActivityOptions.makeSceneTransitionAnimation(mParentActivity,

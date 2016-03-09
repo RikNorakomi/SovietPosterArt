@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SovietPosterArt</string>
     <string name="shared_prefs_file_name">norakomi.sovietPosterArt</string>
+    <string name="menu_share_artwork">Share artwork</string>
+    <string name="menu_hide_navbar">Hide Navigation Bar</string>
+    <string name="menu_dummy_text">Just dummy text</string>
 </resources>

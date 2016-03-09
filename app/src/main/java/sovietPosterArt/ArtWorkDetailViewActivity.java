@@ -1,9 +1,11 @@
 package sovietPosterArt;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -15,6 +17,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +31,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.ColorUtils;
@@ -44,35 +48,41 @@ import sovietPosterArt.utils.TypefaceUtil;
 public class ArtWorkDetailViewActivity extends GenericActivity {
 
     private final String TAG = getClass().getSimpleName();
+
+    private PopupMenu mOverflowMenu;
     private boolean mShowUI;
-    private boolean mGestureFlagSystemUiBecameVisible;
 
     @Bind(R.id.container)
     FrameLayout mContainerView;
     @Bind(R.id.back_button)
     ImageButton mBackButton;
+    @Bind(R.id.overflow_button)
+    ImageButton mOverflowButton;
+
     @Bind(R.id.imageView)
     SubsamplingScaleImageView imageView;
     @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_work_detail);
-        ScreenUtils.hideStatusBar(this);
-        ScreenUtils.hideNavigationBar(this);
 
         ButterKnife.bind(this);
 
         mBackButton.setOnClickListener(v -> v.postDelayed(this::onBackPressed, 200)); // adds a 200ms sec delay to show ripple effect on clicking back button
+        setOverflowMenu();
+
 
         mShowUI = true;
-        String imageUrl = getIntent().getStringExtra(Constants.ART_WORK_URL);
+        Poster artWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
+        String imageUrl = artWork.getImageUrl();
 
         mContainerView.setOnClickListener(v -> {
             mShowUI = !mShowUI;
-            showHideChrome(mShowUI);
+            showHideUiOverlay(mShowUI);
             App.log(TAG, "setting mShowUI to: " + mShowUI);
         });
 //        mArtWorkInfoContainer.setPadding(0, 0, 0, ScreenUtils.getNavigationBarHeightPx());
@@ -123,33 +133,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                         .setDuration(1200)
                                         .setInterpolator(interpolator)
                                         .start();
-
-                                // color the status bar. Set a complementary dark color on L,
-                                // light or dark color on M (with matching status bar icons)
-//                                int statusBarColor = getWindow().getStatusBarColor();
-//                                Palette.Swatch topColor = ColorUtils.getMostPopulousSwatch(palette);
-//                                if (topColor != null &&
-//                                        (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-//                                    statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-//                                            isDark, SCRIM_ADJUSTMENT);
-//                                    // set a light status bar on M+
-//                                    if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                        ViewUtils.setLightStatusBar(imageView);
-//                                    }
-//                                }
-//
-//                                if (statusBarColor != getWindow().getStatusBarColor()) {
-////                                imageView.setScrimColor(statusBarColor);
-//                                    ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(getWindow
-//                                            ().getStatusBarColor(), statusBarColor);
-//                                    statusBarColorAnim.addUpdateListener(animation -> getWindow().setStatusBarColor((int) animation
-//                                            .getAnimatedValue()));
-//                                    statusBarColorAnim.setDuration(1000);
-//                                    statusBarColorAnim.setInterpolator(AnimationUtils
-//                                            .loadInterpolator(ArtWorkDetailViewActivity.this, android.R
-//                                                    .interpolator.fast_out_slow_in));
-//                                    statusBarColorAnim.start();
-//                                }
                             }
                         });
 
@@ -185,7 +168,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                 if (imageView.isReady()) {
 //                    PointF sCoord = imageView.viewToSourceCoord(e.getX(), e.getY());
                     mShowUI = !mShowUI;
-                    showHideChrome(mShowUI);
+                    showHideUiOverlay(mShowUI);
                     App.log(TAG, "setting mShowUI to: " + mShowUI);
                 }
                 return true;
@@ -211,23 +194,19 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         TextView mBylineView = (TextView) findViewById(R.id.artist);
 
         mTitleView.setTypeface(TypefaceUtil.getAndCache(titleFont));
-        mTitleView.setText("TITLE should come here!");
+        mTitleView.setText(artWork.getTitle());
 
         mBylineView.setTypeface(TypefaceUtil.getAndCache(bylineFont));
-        mBylineView.setText("Artist info should go here!");
 
+        String author = artWork.getAuthor();
+        String year = artWork.getYear();
+        String artistInfo = author + ", " + year;
+        mBylineView.setText(artistInfo);
 
-        // setup status and navigation bar scrim: 0xaaffff00 = bright yellow
-//        ScreenUtils.setMargins(mArtWorkInfoContainer, 0, 0, 0, ScreenUtils.getNavigationBarHeightPx());
+        // setup status and navigation bar scrim:
         mArtWorkInfoContainer.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.BOTTOM)); // original value = 0xaa000000
-//        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mArtWorkInfoContainer.getLayoutParams();
-//        layoutParams.setMargins(0,0,0,ScreenUtils.getNavigationBarHeightPx());
-
-//        mArtWorkInfoContainer.setPadding(0, 0, 0, ScreenUtils.getNavigationBarHeightPx()+2);
-//
         View mStatusBarScrimView = findViewById(R.id.status_bar_scrim);
-//        ScreenUtils.setMargins(mStatusBarScrimView, 0, ScreenUtils.getStatusBarHeightPx(), 0, 0);
         mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.TOP));
 
@@ -245,13 +224,8 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
         mContainerView.setOnSystemUiVisibilityChangeListener(
                 vis -> {
-
-                    final boolean visible = (vis & View.SYSTEM_UI_FLAG_LOW_PROFILE) == 0;
-                    if (visible) {
-                        mGestureFlagSystemUiBecameVisible = true;
-                    }
-
                     mArtWorkInfoContainer.setVisibility(View.VISIBLE);
+                    mBackButton.setVisibility(View.VISIBLE);
 
                     if (mShowUI) {
                         mArtWorkInfoContainer.animate()
@@ -259,6 +233,12 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                 .translationY(mShowUI ? 1 : -metadataSlideDistance)
                                 .setDuration(400)
                                 .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
+                        mBackButton.animate()
+                                .alpha(1f)
+                                .translationY(mShowUI ? 1 : metadataSlideDistance)
+                                .setDuration(400)
+                                .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
+
                     } else {
                         mArtWorkInfoContainer.animate()
                                 .alpha(0f)
@@ -268,6 +248,15 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                     App.log(TAG, "setting end action view gone");
                                     mArtWorkInfoContainer.setVisibility(View.GONE);
                                 });
+                        mBackButton.animate()
+                                .alpha(0f)
+                                .translationY(-metadataSlideDistance)
+                                .setDuration(400)
+                                .withEndAction(() -> {
+                                    App.log(TAG, "setting end action view gone");
+                                    mBackButton.setVisibility(View.GONE);
+                                });
+
                     }
 
 
@@ -289,7 +278,57 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                 });
     }
 
-    private void showHideChrome(boolean show) {
+    private void setOverflowMenu() {
+        mOverflowMenu = new PopupMenu(this, mOverflowButton);
+        mOverflowMenu.getMenu().clear();
+        mOverflowMenu.inflate(R.menu.overflow_menu);
+
+        mOverflowButton.setOnClickListener(v -> v.postDelayed(() -> {
+            mOverflowMenu.show();
+        }, 200));
+        mOverflowMenu.setOnDismissListener(popupMenu -> {
+            hideUiBars();
+        });
+        mOverflowMenu.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.action_share_artwork:
+                    String shareText = "this is test text";
+                    Intent shareIntent = ShareCompat.IntentBuilder
+                            .from(this)
+                            .setType("text/plain")
+                            .setText(shareText)
+                            .getIntent();
+
+                    startActivity(shareIntent);
+                    return true;
+                case R.id.action_hide_navbar:
+                    ScreenUtils.hideStatusBar(this);
+                    ScreenUtils.hideNavigationBar(this);
+                    return false;
+            }
+            return false;
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        App.log(TAG, "in onResume");
+        hideUiBars();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mOverflowMenu.dismiss();
+    }
+
+    private void hideUiBars() {
+        ScreenUtils.hideStatusBar(this);
+        ScreenUtils.hideNavigationBar(this);
+    }
+
+    private void showHideUiOverlay(boolean show) {
         int flags = show ? 0 : View.SYSTEM_UI_FLAG_LOW_PROFILE;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             flags |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

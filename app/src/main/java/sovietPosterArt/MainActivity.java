@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,12 +17,13 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 import sovietPosterArt.data.DataManager;
-import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
 import sovietPosterArt.data.api.sovietPosterArt.SovietArtMeService;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
+import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
 import sovietPosterArt.sovietPosterArt.R;
-import sovietPosterArt.ui.RecyclerAdapter;
+import sovietPosterArt.ui.ArtFeedAdapter;
 import sovietPosterArt.utils.App;
+import sovietPosterArt.utils.ScreenUtils;
 
 public class MainActivity extends GenericActivity {
     /**
@@ -33,7 +33,7 @@ public class MainActivity extends GenericActivity {
     @Bind(R.id.overview_recycler)
     RecyclerView mRecyclerView;
 
-    private RecyclerAdapter mRecyclerAdapter;
+    private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
 
     @Override
@@ -42,21 +42,20 @@ public class MainActivity extends GenericActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-
-
         // setup RecyclerView
-        mRecyclerAdapter = new RecyclerAdapter(this);
+        mArtFeedAdapter = new ArtFeedAdapter(this);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-        mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerView.setAdapter(mArtFeedAdapter);
 
-        handleUiVisibilityChange();
+        ScreenUtils.handleUiVisibilityChange(this); // todo remove??
 
         mDataManager = new DataManager() {
             @Override
             public void onDataLoaded(List<? extends Poster> data) {
+                // todo: not working ...check
                 boolean dataNotNull = data != null;
                 App.log(TAG, "setting data on recycler with dataNotNull = " + dataNotNull);
-                mRecyclerAdapter.setArtWorkCollection((ArrayList<Poster>) data);
+                mArtFeedAdapter.setArtWorkCollection((ArrayList<Poster>) data);
             }
         };
 
@@ -66,29 +65,8 @@ public class MainActivity extends GenericActivity {
         getPosterData();
     }
 
-    private void handleUiVisibilityChange() {
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener
-                (new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        App.log(TAG, "in onSystemUiVisibilityChange()");
-                        // Note that system bars will only be "visible" if none of the
-                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
-                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                            // TODO: The system bars are visible. Make any desired
-                            // adjustments to your UI, such as showing the action bar or
-                            // other navigational controls.
-                        } else {
-                            // TODO: The system bars are NOT visible. Make any desired
-                            // adjustments to your UI, such as hiding the action bar or
-                            // other navigational controls.
-                        }
-                    }
-                });
-    }
 
-    public void getPosterData() {
+    public void getPosterData() { // todo abstract away
         new Thread(() -> {
             ArrayList<Poster> posters = new ArrayList<>();
 
@@ -107,13 +85,9 @@ public class MainActivity extends GenericActivity {
             call.enqueue(new Callback<SovietArtMePosters>() {
                 @Override
                 public void onResponse(Response<SovietArtMePosters> response, Retrofit retrofit) {
-                    App.log(TAG, "response body " + response.body().toString());
+                    App.log(TAG, "onResponse sovietArtMeApi returned posters#: " + response.body().posters.size());
                     posters.addAll(response.body().posters);
-                    for (Poster p : posters) {
-                        App.log(TAG, "poster title: " + p.getTitle() + " filepath: " + p.getFilepath());
-                    }
-
-                    mRecyclerAdapter.setArtWorkCollection(posters);
+                    mArtFeedAdapter.setArtWorkCollection(posters);
                 }
 
                 @Override

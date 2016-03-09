@@ -15,6 +15,7 @@ public interface Constants {
 
     // Intent extra names
     String ART_WORK_URL = "artWorkUrl";
+    String ART_WORK_OBJECT = "artWorkObject";
 
     // Debug
     String TEST_IMAGE_URL = "http://sovietart.me/img/posters/600px/0215.jpg";

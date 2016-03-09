@@ -28,12 +28,12 @@ import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
     private Activity mParentActivity = null;
     private ArrayList<Poster> mPosters = new ArrayList<>();
 
-    public RecyclerAdapter(Activity parentActivity) {
+    public ArtFeedAdapter(Activity parentActivity) {
         mParentActivity = parentActivity;
     }
 
@@ -57,7 +57,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         //todo: implement abstraction layer
 
-        if (mPosters.isEmpty()) return;
+        if (mPosters.isEmpty())
+            return;
 
         App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
 
@@ -88,10 +89,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public int getItemCount() {
         return mPosters.size();
-//        final int fixedDummyViews = 30;
-//        return fixedDummyViews;
     }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.recyler_dummy_textView)
@@ -105,7 +103,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             artWorkImage.setOnClickListener(view -> {
                 artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
                 Intent intent = new Intent(mParentActivity, ArtWorkDetailViewActivity.class);
-                intent.putExtra(Constants.ART_WORK_URL, mPosters.get(getLayoutPosition()).getImageUrl());
+                intent.putExtra(Constants.ART_WORK_OBJECT, mPosters.get(getLayoutPosition()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 ActivityOptions options =
                         ActivityOptions.makeSceneTransitionAnimation(mParentActivity,

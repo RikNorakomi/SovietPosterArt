@@ -16,24 +16,17 @@
          This approach lets the borderless ripple extend beyond the back button's bounds,
          toolbar clips it. Wrapping layout needed for the ripple. -->
     <FrameLayout
+        android:id="@+id/back_button_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="@dimen/z_fab_over_touchable_app_bar">
 
-        <!-- animate alpha in DribbleShot#enterAnimation
-             margins push out parent for the borderless ripple -->
-        <!--<ImageButton-->
-        <!--android:id="@+id/back_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="top|start"-->
-        <!--android:layout_marginStart="@dimen/art_detail_padding_left"-->
-        <!--android:layout_marginTop="@dimen/art_detail_padding_top"/>-->
         <ImageButton
             android:id="@+id/back_button"
             android:layout_width="?android:actionBarSize"
             android:layout_height="?android:actionBarSize"
+            android:layout_marginTop="@dimen/status_bar_height_hardcoded"
             android:layout_marginBottom="@dimen/padding_normal"
             android:layout_marginEnd="@dimen/padding_normal"
             android:alpha="0"

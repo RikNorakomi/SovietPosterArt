@@ -3,17 +3,16 @@ package sovietPosterArt;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ShareCompat;
-import android.support.v7.graphics.Palette;
+import android.provider.MediaStore;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -22,19 +21,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
-import sovietPosterArt.utils.ColorUtils;
+import sovietPosterArt.utils.AppContext;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -51,6 +50,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
     private PopupMenu mOverflowMenu;
     private boolean mShowUI;
+    private Bitmap mArtWorkBitmap;
 
     @Bind(R.id.container)
     FrameLayout mContainerView;
@@ -63,6 +63,9 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     SubsamplingScaleImageView imageView;
     @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
+    @Bind(R.id.status_bar_scrim)
+    View mStatusBarScrimView;
+    private Poster mArtWork;
 
 
     @Override
@@ -77,8 +80,8 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
 
         mShowUI = true;
-        Poster artWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
-        String imageUrl = artWork.getImageUrl();
+        mArtWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
+        String imageUrl = mArtWork.getImageUrl();
 
         mContainerView.setOnClickListener(v -> {
             mShowUI = !mShowUI;
@@ -87,73 +90,83 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         });
 //        mArtWorkInfoContainer.setPadding(0, 0, 0, ScreenUtils.getNavigationBarHeightPx());
 
-        RequestListener<? super String, Bitmap> imageLoadedListener = new RequestListener<String, Bitmap>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                return false;
-            }
+//        RequestListener<? super String, Bitmap> imageLoadedListener = new RequestListener<String, Bitmap>() {
+//            @Override
+//            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                App.log(TAG, "onResourceReady");
+//                final Bitmap bitmap = resource;
+//                float imageScale = (float) imageView.getHeight() / (float) bitmap.getHeight();
+//                float twentyFourDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+//                        getResources().getDisplayMetrics());
+//
+//                /** When image is loaded, generate a Palette */
+//                Palette.from(bitmap)
+//                        .maximumColorCount(3)
+//                        .clearFilters()
+//                        .setRegion(0, 0, bitmap.getWidth(), (int) (twentyFourDip * 2)) // todo improve palette read out for determining back button color
+//                        .generate(new Palette.PaletteAsyncListener() {
+//                            @Override
+//                            public void onGenerated(Palette palette) {
+//                                boolean isDark;
+//                                @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+//                                if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+//                                    isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+//                                } else {
+//                                    isDark = lightness == ColorUtils.IS_DARK;
+//                                }
+//                                App.log(TAG, "Palette.onGenerated; isDark = " + isDark);
+//
+//                                if (!isDark) { // make back icon dark on light images
+//                                    App.log(TAG, "setting color filter");
+//                                    // todo keeping back icon white for now
+////                                    mBackButton.setColorFilter(ContextCompat.getColor(
+////                                            ArtWorkDetailViewActivity.this, R.color.dark_icon));
+//                                }
+//
+//                                // possible animation for activity switch
+//                                Interpolator interpolator = AnimationUtils.loadInterpolator(
+//                                        ArtWorkDetailViewActivity.this, android.R.interpolator.fast_out_slow_in);
+//                                mBackButton.animate()
+//                                        .alpha(1f)
+//                                        .setDuration(1200)
+//                                        .setInterpolator(interpolator)
+//                                        .start();
+//                            }
+//                        });
+//
+//                return false;
+//            }
+//        };
 
-            @Override
-            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                App.log(TAG, "onResourceReady");
-                final Bitmap bitmap = resource;
-                float imageScale = (float) imageView.getHeight() / (float) bitmap.getHeight();
-                float twentyFourDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
-                        getResources().getDisplayMetrics());
-
-                /** When image is loaded, generate a Palette */
-                Palette.from(bitmap)
-                        .maximumColorCount(3)
-                        .clearFilters()
-                        .setRegion(0, 0, bitmap.getWidth(), (int) (twentyFourDip * 2)) // todo improve palette read out for determining back button color
-                        .generate(new Palette.PaletteAsyncListener() {
-                            @Override
-                            public void onGenerated(Palette palette) {
-                                boolean isDark;
-                                @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
-                                if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
-                                    isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
-                                } else {
-                                    isDark = lightness == ColorUtils.IS_DARK;
-                                }
-                                App.log(TAG, "Palette.onGenerated; isDark = " + isDark);
-
-                                if (!isDark) { // make back icon dark on light images
-                                    App.log(TAG, "setting color filter");
-                                    // todo keeping back icon white for now
-//                                    mBackButton.setColorFilter(ContextCompat.getColor(
-//                                            ArtWorkDetailViewActivity.this, R.color.dark_icon));
-                                }
-
-                                // possible animation for activity switch
-                                Interpolator interpolator = AnimationUtils.loadInterpolator(
-                                        ArtWorkDetailViewActivity.this, android.R.interpolator.fast_out_slow_in);
-                                mBackButton.animate()
-                                        .alpha(1f)
-                                        .setDuration(1200)
-                                        .setInterpolator(interpolator)
-                                        .start();
-                            }
-                        });
-
-                return false;
-            }
-        };
         Glide.with(this)
                 .load(imageUrl)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
-                .listener(imageLoadedListener)
+//                .listener(imageLoadedListener) // inserted for getting a palette
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                         /** When image is loaded set it to the imageView either upscale it, preserving aspect ratio, when there is whitespace
                          *  or downscale it so that either width or length of image fits screen size */
-                        imageView.setImage(ImageSource.bitmap(bitmap));
+                        mArtWorkBitmap = bitmap;
+                        imageView.setImage(ImageSource.bitmap(mArtWorkBitmap));
                         imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
 
                         float scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
+                        // todo adjust for when scale should be set according to width instead of height
+
                         imageView.setMinScale(scale);
+
+                        App.log(TAG, "setting image on view with miscale = " + scale +
+                                " and getScale = " + imageView.getScale());
+
+                        imageView.setMaxScale(5 * imageView.getMinScale());
+
                         PointF pf = new PointF(0.5f, 0.5f);
                         imageView.setScaleAndCenter(scale, pf);
                     }
@@ -178,7 +191,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         imageView.setOnTouchListener((view, motionEvent) -> gestureDetector.onTouchEvent(motionEvent));
 
         // Zoom settings
-        float maxZoom = 10f;
+        float maxZoom = 15f;
         imageView.setMaxScale(maxZoom);
         imageView.setDoubleTapZoomScale(maxZoom);
         imageView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
@@ -194,19 +207,19 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         TextView mBylineView = (TextView) findViewById(R.id.artist);
 
         mTitleView.setTypeface(TypefaceUtil.getAndCache(titleFont));
-        mTitleView.setText(artWork.getTitle());
+        mTitleView.setText(mArtWork.getTitle());
 
         mBylineView.setTypeface(TypefaceUtil.getAndCache(bylineFont));
 
-        String author = artWork.getAuthor();
-        String year = artWork.getYear();
+        String author = mArtWork.getAuthor();
+        String year = mArtWork.getYear();
         String artistInfo = author + ", " + year;
         mBylineView.setText(artistInfo);
 
         // setup status and navigation bar scrim:
         mArtWorkInfoContainer.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.BOTTOM)); // original value = 0xaa000000
-        View mStatusBarScrimView = findViewById(R.id.status_bar_scrim);
+
         mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.TOP));
 
@@ -227,23 +240,30 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     mArtWorkInfoContainer.setVisibility(View.VISIBLE);
                     mBackButton.setVisibility(View.VISIBLE);
 
+                    final int animationDuration = 400;
+
                     if (mShowUI) {
+                        // move ui overlay into vision
                         mArtWorkInfoContainer.animate()
                                 .alpha(1f)
                                 .translationY(mShowUI ? 1 : -metadataSlideDistance)
-                                .setDuration(400)
+                                .setDuration(animationDuration)
                                 .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
                         mBackButton.animate()
                                 .alpha(1f)
                                 .translationY(mShowUI ? 1 : metadataSlideDistance)
-                                .setDuration(400)
+                                .setDuration(animationDuration)
                                 .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
+                        mStatusBarScrimView.animate()
+                                .alpha(1f)
+                                .setDuration(animationDuration);
 
                     } else {
+                        // move ui overlay out of vision
                         mArtWorkInfoContainer.animate()
                                 .alpha(0f)
                                 .translationY(metadataSlideDistance)
-                                .setDuration(400)
+                                .setDuration(animationDuration)
                                 .withEndAction(() -> {
                                     App.log(TAG, "setting end action view gone");
                                     mArtWorkInfoContainer.setVisibility(View.GONE);
@@ -251,11 +271,14 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                         mBackButton.animate()
                                 .alpha(0f)
                                 .translationY(-metadataSlideDistance)
-                                .setDuration(400)
+                                .setDuration(animationDuration)
                                 .withEndAction(() -> {
                                     App.log(TAG, "setting end action view gone");
                                     mBackButton.setVisibility(View.GONE);
                                 });
+                        mStatusBarScrimView.animate()
+                                .alpha(0f)
+                                .setDuration(animationDuration);
 
                     }
 
@@ -292,14 +315,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         mOverflowMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_share_artwork:
-                    String shareText = "this is test text";
-                    Intent shareIntent = ShareCompat.IntentBuilder
-                            .from(this)
-                            .setType("text/plain")
-                            .setText(shareText)
-                            .getIntent();
-
-                    startActivity(shareIntent);
+                    shareArtwork();
                     return true;
                 case R.id.action_hide_navbar:
                     ScreenUtils.hideStatusBar(this);
@@ -308,6 +324,32 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             }
             return false;
         });
+    }
+
+    private void shareArtwork() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Art work from Norakomi's Soviet Poster Art app");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                Html.fromHtml("<p>I found this art work via the <a href=" + Constants.TEMP_APP_URL + ">"
+                        + Constants.APP_NAME
+                        + " App</a>:</p> <br>"));
+
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Title: </p>" + mArtWork.getTitle()));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Author: </p>" + mArtWork.getAuthor()));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Date: </p>" + mArtWork.getYear()));
+
+        // todo figure out whether i need to save file to external storage
+        String imageDescription = mArtWork.getTitle();
+        String path = MediaStore.Images.Media.insertImage(AppContext.getContext().getContentResolver(),
+                mArtWorkBitmap, imageDescription, null);
+        ArrayList<Uri> imageUri = new ArrayList<>();
+        Uri uri = Uri.parse(path);
+        imageUri.add(uri);
+
+        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUri);
+
+        startActivity(Intent.createChooser(shareIntent, "Share art work to..."));
     }
 
     @Override

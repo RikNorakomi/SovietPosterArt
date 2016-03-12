@@ -10,7 +10,7 @@
     <dimen name="art_detail_full_screen_button_height">48dp</dimen>
 
     <dimen name="padding_bottom_art_detail">24dp</dimen>
-
+    <dimen name="status_bar_height_hardcoded">16dp</dimen>
 
     <!-- ** ArtWork Detail Screen Dimension ** -->
 
@@ -32,5 +32,6 @@
     <dimen name="art_detail_padding_top">16dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
     <dimen name="z_fab_over_touchable_app_bar">9dp</dimen>
+
 
 </resources>

@@ -20,9 +20,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="sovietPosterArt.ArtWorkDetailViewActivity">
-
+        <activity
+            android:name="sovietPosterArt.ArtWorkDetailViewActivity"
+            android:label="@string/app_name">
         </activity>
 
+        <provider
+            android:name="sovietPosterArt.ImageFileProvider"
+            android:authorities="sovietPosterArt.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false"
+            android:readPermission="sovietPosterArt.fileprovider.READ">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
     </application>
+
+
 </manifest>

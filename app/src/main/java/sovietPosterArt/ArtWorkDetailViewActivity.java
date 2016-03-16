@@ -1,13 +1,9 @@
 package sovietPosterArt;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.Html;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -26,14 +22,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
-import sovietPosterArt.utils.AppContext;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -51,6 +44,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private PopupMenu mOverflowMenu;
     private boolean mShowUI;
     private Bitmap mArtWorkBitmap;
+    private String mImageUrl;
 
     @Bind(R.id.container)
     FrameLayout mContainerView;
@@ -81,7 +75,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
         mShowUI = true;
         mArtWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
-        String imageUrl = mArtWork.getImageUrl();
+        mImageUrl = mArtWork.getImageUrl();
 
         mContainerView.setOnClickListener(v -> {
             mShowUI = !mShowUI;
@@ -144,7 +138,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 //        };
 
         Glide.with(this)
-                .load(imageUrl)
+                .load(mImageUrl)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
 //                .listener(imageLoadedListener) // inserted for getting a palette
@@ -315,41 +309,11 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         mOverflowMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_share_artwork:
-                    shareArtwork();
+                    new ShareArtworkTask(this, mArtWork);
                     return true;
-                case R.id.action_hide_navbar:
-                    ScreenUtils.hideStatusBar(this);
-                    ScreenUtils.hideNavigationBar(this);
-                    return false;
             }
             return false;
         });
-    }
-
-    private void shareArtwork() {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Art work from Norakomi's Soviet Poster Art app");
-        shareIntent.putExtra(Intent.EXTRA_TEXT,
-                Html.fromHtml("<p>I found this art work via the <a href=" + Constants.TEMP_APP_URL + ">"
-                        + Constants.APP_NAME
-                        + " App</a>:</p> <br>"));
-
-        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Title: </p>" + mArtWork.getTitle()));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Author: </p>" + mArtWork.getAuthor()));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<p>Date: </p>" + mArtWork.getYear()));
-
-        // todo figure out whether i need to save file to external storage
-        String imageDescription = mArtWork.getTitle();
-        String path = MediaStore.Images.Media.insertImage(AppContext.getContext().getContentResolver(),
-                mArtWorkBitmap, imageDescription, null);
-        ArrayList<Uri> imageUri = new ArrayList<>();
-        Uri uri = Uri.parse(path);
-        imageUri.add(uri);
-
-        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUri);
-
-        startActivity(Intent.createChooser(shareIntent, "Share art work to..."));
     }
 
     @Override

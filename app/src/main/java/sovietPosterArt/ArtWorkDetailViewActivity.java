@@ -54,7 +54,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     ImageButton mOverflowButton;
 
     @Bind(R.id.imageView)
-    SubsamplingScaleImageView imageView;
+    SubsamplingScaleImageView imageZoomView;
     @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
     @Bind(R.id.status_bar_scrim)
@@ -94,7 +94,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 //            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
 //                App.log(TAG, "onResourceReady");
 //                final Bitmap bitmap = resource;
-//                float imageScale = (float) imageView.getHeight() / (float) bitmap.getHeight();
+//                float imageScale = (float) imageZoomView.getHeight() / (float) bitmap.getHeight();
 //                float twentyFourDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
 //                        getResources().getDisplayMetrics());
 //
@@ -145,24 +145,25 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                        /** When image is loaded set it to the imageView either upscale it, preserving aspect ratio, when there is whitespace
+                        /** When image is loaded set it to the imageZoomView either upscale it, preserving aspect ratio, when there is whitespace
                          *  or downscale it so that either width or length of image fits screen size */
                         mArtWorkBitmap = bitmap;
-                        imageView.setImage(ImageSource.bitmap(mArtWorkBitmap));
-                        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+                        imageZoomView.setImage(ImageSource.bitmap(mArtWorkBitmap));
+                        imageZoomView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
 
                         float scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
                         // todo adjust for when scale should be set according to width instead of height
 
-                        imageView.setMinScale(scale);
+                        // Zoom settings
+                        float maxScaleFactor = 8f;
+                        imageZoomView.setMinScale(scale);
+                        imageZoomView.setMaxScale(maxScaleFactor * scale);
+                        imageZoomView.setDoubleTapZoomScale(scale * 4);
+                        imageZoomView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
 
-                        App.log(TAG, "setting image on view with miscale = " + scale +
-                                " and getScale = " + imageView.getScale());
-
-                        imageView.setMaxScale(5 * imageView.getMinScale());
-
+                        // todo centering view not working as desired
                         PointF pf = new PointF(0.5f, 0.5f);
-                        imageView.setScaleAndCenter(scale, pf);
+                        imageZoomView.setScaleAndCenter(scale, pf);
                     }
                 });
 
@@ -172,8 +173,8 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                if (imageView.isReady()) {
-//                    PointF sCoord = imageView.viewToSourceCoord(e.getX(), e.getY());
+                if (imageZoomView.isReady()) {
+//                    PointF sCoord = imageZoomView.viewToSourceCoord(e.getX(), e.getY());
                     mShowUI = !mShowUI;
                     showHideUiOverlay(mShowUI);
                     App.log(TAG, "setting mShowUI to: " + mShowUI);
@@ -182,14 +183,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             }
         });
 
-        imageView.setOnTouchListener((view, motionEvent) -> gestureDetector.onTouchEvent(motionEvent));
-
-        // Zoom settings
-        float maxZoom = 15f;
-        imageView.setMaxScale(maxZoom);
-        imageView.setDoubleTapZoomScale(maxZoom);
-        imageView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
-
+        imageZoomView.setOnTouchListener((view, motionEvent) -> gestureDetector.onTouchEvent(motionEvent));
 
         // Set font and Info Text
         String titleFont = "AlegreyaSans-Black.ttf";

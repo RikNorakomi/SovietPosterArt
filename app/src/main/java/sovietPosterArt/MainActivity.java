@@ -95,6 +95,6 @@ public class MainActivity extends GenericActivity {
                     Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        }).run();
+        }).start();
     }
 }

@@ -1,0 +1,16 @@
+Couple of random image url for SovietArtMe:
+
+   String[] url = {
+                "http://sovietart.me/img/posters/600px/0200.jpg",
+                "http://sovietart.me/img/posters/600px/0196.jpg",
+                "http://sovietart.me/img/posters/600px/0215.jpg",
+                "http://sovietart.me/img/posters/600px/0333.jpg",
+                "http://sovietart.me/img/posters/600px/0414.jpg",
+                "http://sovietart.me/img/posters/600px/0412.jpg",
+                "http://sovietart.me/img/posters/600px/0411.jpg",
+                "http://sovietart.me/img/posters/600px/0403.jpg",
+                "http://sovietart.me/img/posters/600px/0388.jpg",
+                "http://sovietart.me/img/posters/600px/0323.jpg",
+                "http://sovietart.me/img/posters/600px/0327.jpg",
+                "http://sovietart.me/img/posters/600px/0357.jpg",
+        };

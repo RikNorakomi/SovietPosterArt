@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import sovietPosterArt.ArtWorkDetailViewActivity;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
+import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 
 public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
@@ -37,7 +38,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     public void setArtWorkCollection(ArrayList<Poster> data) {
-//        App.log(TAG, "setting ArtWorkCollection with postersize = " + data.size());
+        App.log(TAG, "setting ArtWorkCollection with postersize = " + data.size());
         mPosters.clear();
         mPosters.addAll(data);
         notifyDataSetChanged();
@@ -59,7 +60,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
         if (mPosters.isEmpty())
             return;
 
-//        App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
+        App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
 
         Glide.with(mParentActivity)
                 .load(mPosters.get(position).getImageUrl())

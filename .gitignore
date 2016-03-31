@@ -1,6 +1,8 @@
 *.iml
 .gradle
+.gitignore
 /local.properties
+/.idea/compiler.xml
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store

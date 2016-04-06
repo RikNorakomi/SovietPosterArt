@@ -66,7 +66,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Log.e("GLide load exception: ", e.toString() == null ? "exception is Null!" : e.toString());
+                        Log.e(TAG, "Glide load exception: ");
                         return false;
                     }
 

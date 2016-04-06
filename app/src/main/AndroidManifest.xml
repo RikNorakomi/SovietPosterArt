@@ -14,6 +14,11 @@
         android:theme="@style/AppTheme">
 
         <activity android:name="sovietPosterArt.MainActivity">
+        </activity>
+
+        <activity
+            android:name="sovietPosterArt.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -28,12 +33,12 @@
         <provider
             android:name="sovietPosterArt.ImageFileProvider"
             android:authorities="sovietPosterArt.fileprovider"
-            android:grantUriPermissions="true"
             android:exported="false"
+            android:grantUriPermissions="true"
             android:readPermission="sovietPosterArt.fileprovider.READ">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
+                android:resource="@xml/filepaths"/>
         </provider>
 
     </application>

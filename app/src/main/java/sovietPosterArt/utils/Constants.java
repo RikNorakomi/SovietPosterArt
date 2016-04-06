@@ -1,7 +1,5 @@
 package sovietPosterArt.utils;
 
-import sovietPosterArt.sovietPosterArt.BuildConfig;
-
 /**
  * Created by MEDION on 7-1-2016.
  */
@@ -32,6 +30,6 @@ public final class Constants {
     /**
      * Constants for Firebase Url
      */
-    public static final String FIREBASE_URL= BuildConfig.UNIQUE_FIREBASE_ROOT_URL;
+    public static final String FIREBASE_URL= "";
    ;
 }

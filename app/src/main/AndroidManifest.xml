@@ -31,7 +31,7 @@
         </activity>
 
         <provider
-            android:name="sovietPosterArt.ImageFileProvider"
+            android:name="sovietPosterArt.sharing_artwork.ImageFileProvider"
             android:authorities="sovietPosterArt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"

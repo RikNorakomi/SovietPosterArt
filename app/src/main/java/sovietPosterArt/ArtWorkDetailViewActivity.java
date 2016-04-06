@@ -25,6 +25,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
+import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;

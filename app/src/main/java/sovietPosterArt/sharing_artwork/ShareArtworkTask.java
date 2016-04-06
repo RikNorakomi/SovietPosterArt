@@ -1,4 +1,4 @@
-package sovietPosterArt;
+package sovietPosterArt.sharing_artwork;
 
 import android.content.Context;
 import android.content.Intent;

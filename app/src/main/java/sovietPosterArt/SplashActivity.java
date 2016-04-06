@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import sovietPosterArt.utils.ScreenUtils;
+
 /**
  * Created by Rik van Velzen, Norakomi.com, on 6-4-2016.
  * <p>

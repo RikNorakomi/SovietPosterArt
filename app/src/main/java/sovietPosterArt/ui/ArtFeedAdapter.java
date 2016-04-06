@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -37,7 +36,6 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     public void setArtWorkCollection(ArrayList<Poster> data) {
-//        App.log(TAG, "setting ArtWorkCollection with postersize = " + data.size());
         mPosters.clear();
         mPosters.addAll(data);
         notifyDataSetChanged();
@@ -51,9 +49,6 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        TextView tv = holder.artWorkDummyText;
-        tv.setText("view #" + (position + 1));
-
         //todo: implement abstraction layer
 
         if (mPosters.isEmpty())
@@ -74,7 +69,6 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         Log.e("GLide onResourceReady: ", "");
                         // when image is loaded remove artWorkDummyText
-                        holder.artWorkDummyText.setVisibility(View.GONE);
                         holder.artWorkImage.setVisibility(View.VISIBLE);
                         return false;
                     }
@@ -91,8 +85,6 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.recyler_dummy_textView)
-        TextView artWorkDummyText;
         @Bind(R.id.recycler_image_view)
         ImageView artWorkImage;
 

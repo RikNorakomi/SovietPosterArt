@@ -2,6 +2,7 @@
 .idea/*.xml
 /.gradle
 .gitignore
+<<<<<<< HEAD
 local.properties
 .idea/*.xml
 .idea/compiler.xml
@@ -9,6 +10,13 @@ local.properties
 /.idea/misc.xml
 .idea/workspace.xml
 .idea/libraries
+=======
+/local.properties
+/.idea/compiler.xml
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/dictionaries
+>>>>>>> f3cbe13cc0ae5f62d981fbdbe4258603ddecf479
 .DS_Store
 /build
 /captures

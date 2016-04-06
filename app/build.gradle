@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "norakomi.recyclerwithtranslucentbars"
+        applicationId "norakomi.sovietPosterArt"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1

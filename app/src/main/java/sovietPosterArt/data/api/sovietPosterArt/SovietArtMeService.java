@@ -26,15 +26,17 @@ public interface SovietArtMeService {
     @GET("/soviet_art.json")
     Call<SovietArtMePosters> loadPostersData();
 
-    @GET("/soviet_art2.json")
-    Call<SovietArtMePosters> loadPostersData2();
+
 
     /**
-     * Loads url of pages from the sovietArtMe website that contain individual postersss and information
+     * Loads url of pages from the sovietArtMe website that contain individual posters and information
      */
     @GET("/soviet_art_me_poster_pages.json")
     Call<SovietArtMePostersPages> loadPosterPagesUrlList();
 
     @GET("/soviet_art_test.json")
     Call<SovietArtMeTest> loadTestUrlList();
+
+    @GET("/soviet_art2.json")
+    Call<SovietArtMePosters> loadPostersData2();
 }

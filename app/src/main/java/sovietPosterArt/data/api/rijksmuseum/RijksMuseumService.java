@@ -43,9 +43,6 @@ public interface RijksMuseumService {
     String dataFormat = "&dataFormat=" + RESPONSE_DATA_FORMAT;
     String basePath = "/api/"+ LANGUAGE_CODE + "/collection" + apiKey + dataFormat;
 
-
-
-
     @GET(basePath)
     void getArtworkByArtist(
             @Query("maker") String artist,
@@ -55,9 +52,6 @@ public interface RijksMuseumService {
     void getPaintings(@Query("page") Integer page,
                       @Query("per_page") Integer pageSize,
                       Callback<List<PaintingsResponse>> callback);
-
-
-
 
     // For future reference
 

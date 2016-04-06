@@ -21,7 +21,6 @@ import retrofit.Retrofit;
 import sovietPosterArt.data.DataManager;
 import sovietPosterArt.data.api.sovietPosterArt.SovietArtMeService;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
-import sovietPosterArt.data.api.sovietPosterArt.model.Poster2;
 import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.ui.ArtFeedAdapter;
@@ -63,10 +62,10 @@ public class MainActivity extends GenericActivity {
             }
         };
 
-        App.log(TAG, "pre .loadSovietArtMePosters()");
+        // todo: move getting data art work data to a dataManager
 //        mDataManager.loadSovietArtMePosters();
-
         getPosterData();
+
 //        new FirebaseManager();
     }
 
@@ -74,7 +73,6 @@ public class MainActivity extends GenericActivity {
     public void getPosterData() { // todo abstract away
         new Thread(() -> {
             ArrayList<Poster> posters = new ArrayList<>();
-            ArrayList<Poster2> posters2 = new ArrayList<>();
 
 
             String BASE_URL = "http://www.norakomi.com/assets/json";
@@ -84,15 +82,13 @@ public class MainActivity extends GenericActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            // prepare call in Retrofit 2.0
+            // prepare call in Retrofit2
             SovietArtMeService api = retrofit.create(SovietArtMeService.class);
 
             Call<SovietArtMePosters> call = api.loadPostersData();
-            //asynchronous call
             call.enqueue(new Callback<SovietArtMePosters>() {
                 @Override
                 public void onResponse(Response<SovietArtMePosters> response, Retrofit retrofit) {
-//                    App.log(TAG, "onResponse sovietArtMeApi returned postersss#: " + response.body().postersss.size());
                     App.log(TAG, response.toString());
                     posters.addAll(response.body().posters);
                     mArtFeedAdapter.setArtWorkCollection(posters);
@@ -103,25 +99,6 @@ public class MainActivity extends GenericActivity {
                     Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-
-//            Call<SovietArtMePosters2> call2 = api.loadPostersData2();
-//            //asynchronous call
-//            call2.enqueue(new Callback<SovietArtMePosters2>() {
-//                @Override
-//                public void onResponse(Response<SovietArtMePosters2> response, Retrofit retrofit) {
-////                    App.log(TAG, "onResponse sovietArtMeApi returned postersss#: " + response.body().postersss.size());
-//                    App.log(TAG, response.toString());
-//                    posters2.addAll(response.body().posters2);
-//                }
-//
-//                @Override
-//                public void onFailure(Throwable t) {
-//                    Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
-
-
         }).start();
     }
 }

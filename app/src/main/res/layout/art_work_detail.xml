@@ -4,12 +4,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/deepDarkerRed"
     android:fitsSystemWindows="false"> <!-- setting flag to true limit layout to fit within status & navigation bars-->
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+
 
 
     <!-- We're 'faking' a toolbar here as we just want a back button.
@@ -26,9 +29,9 @@
             android:id="@+id/back_button"
             android:layout_width="?android:actionBarSize"
             android:layout_height="?android:actionBarSize"
-            android:layout_marginTop="@dimen/status_bar_height_hardcoded"
             android:layout_marginBottom="@dimen/padding_normal"
             android:layout_marginEnd="@dimen/padding_normal"
+            android:layout_marginTop="@dimen/status_bar_height_hardcoded"
             android:alpha="0"
             android:background="@drawable/mid_grey_ripple"
             android:src="@drawable/ic_arrow_back"/>
@@ -115,5 +118,12 @@
         android:layout_gravity="top"
         android:background="@android:color/transparent"
         />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"/>
 
 </FrameLayout>

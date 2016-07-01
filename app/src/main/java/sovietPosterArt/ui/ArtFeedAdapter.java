@@ -3,6 +3,7 @@ package sovietPosterArt.ui;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 import sovietPosterArt.ArtWorkDetailViewActivity;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
+import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 
 public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
@@ -54,7 +56,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
         if (mPosters.isEmpty())
             return;
 
-//        App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
+        App.log(TAG, "pre glide: poster url = " + mPosters.get(position).getImageUrl() + " fileath:" + mPosters.get(position).getFilepath());
 
         Glide.with(mParentActivity)
                 .load(mPosters.get(position).getImageUrl())
@@ -92,15 +94,20 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
             super(itemView);
             ButterKnife.bind(this, itemView);
             artWorkImage.setOnClickListener(view -> {
-                artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
                 Intent intent = new Intent(mParentActivity, ArtWorkDetailViewActivity.class);
                 intent.putExtra(Constants.ART_WORK_OBJECT, mPosters.get(getLayoutPosition()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ActivityOptions options =
-                        ActivityOptions.makeSceneTransitionAnimation(mParentActivity,
-                                Pair.create(view, Constants.ART_WORK_GALLERY),
-                                Pair.create(view, "artWorkDetail"));
-                mParentActivity.startActivity(intent, options.toBundle());
+
+                if (Build.VERSION.SDK_INT >= 21) {
+                    artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mParentActivity,
+                            Pair.create(view, Constants.ART_WORK_GALLERY),
+                            Pair.create(view, "artWorkDetail"));
+                    mParentActivity.startActivity(intent, options.toBundle());
+                } else {
+                    mParentActivity.startActivity(intent);
+                }
+
             });
         }
     }

@@ -5,7 +5,20 @@ package sovietPosterArt.utils;
  */
 public final class Constants {
 
+    /**
+     * Url of website hosting art collections */
+
+    // Geheugen van Nederland: large archive of all kind of
+    public static final String URL_GEHEUGEN_VAN_NEDERLAND = "http://geheugenvannederland.nl/";
+
+    // AllPoster.nl
+    public static final String URL_ALL_POSTER_NL = "http://www.allposters.nl/";
+    public static final String URL_ALL_POSTER_RUSSIAN_PROPAGANDA = "http://www.allposters.nl/gallery.asp?startat=%2Fgetthumb.asp&txtSearch=RUSSISCHE+PROPAGANDA&CID=BAC41BAF1D5549FF9C377F6B8C8DCA0C&SSK=RUSSISCHE+PROPAGANDA";
+
+    // sovietArt.me
     public static final String URL_SOVIET_ART = "http://sovietart.me";
+
+
     public static final String URL_JSON_SOVIET_ART_ME = "http://www.norakomi.com/assets/json/soviet_art.json";
     public static final String URL_JSON_SOVIET_ART_ME_POSTERS = "http://www.norakomi.com/assets/json/soviet_art_me_posters.json";
     public static final String TEMP_APP_URL = "www.norakomi.com";
@@ -31,5 +44,6 @@ public final class Constants {
      * Constants for Firebase Url
      */
     public static final String FIREBASE_URL= "";
+    public static final String FIREBASE_HOME_POSTERS = "https://dazzling-inferno-8912.firebaseio.com/posters";
    ;
 }

@@ -3,6 +3,7 @@ package sovietPosterArt.utils;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -139,6 +140,12 @@ public class ScreenUtils {
 
     public static int getScreenWidthDp() {
         return getContext().getResources().getConfiguration().screenWidthDp;
+    }
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     private static Context getContext() {

@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +29,7 @@ import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
+import sovietPosterArt.utils.AppContext;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -46,6 +48,10 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private boolean mShowUI;
     private Bitmap mArtWorkBitmap;
     private String mImageUrl;
+    private String mHighResImageUrl;
+    private Poster mArtWork;
+    private boolean highResImageLoaded = false;
+
 
     @Bind(R.id.container)
     FrameLayout mContainerView;
@@ -60,113 +66,35 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     LinearLayout mArtWorkInfoContainer;
     @Bind(R.id.status_bar_scrim)
     View mStatusBarScrimView;
-    private Poster mArtWork;
+    @Bind(R.id.progressBar)
+    ProgressBar loadingSpinner;
+    private float scale = 1;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_work_detail);
-
         ButterKnife.bind(this);
 
         mBackButton.setOnClickListener(v -> v.postDelayed(this::onBackPressed, 200)); // adds a 200ms sec delay to show ripple effect on clicking back button
         setOverflowMenu();
 
-
         mShowUI = true;
         mArtWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
-        mImageUrl = mArtWork.getImageUrl();
+        mImageUrl = mArtWork.getHighResImageUrl();
+        mHighResImageUrl = mArtWork.getHighResImageUrl();
+
 
         mContainerView.setOnClickListener(v -> {
             mShowUI = !mShowUI;
             showHideUiOverlay(mShowUI);
             App.log(TAG, "setting mShowUI to: " + mShowUI);
         });
-//        mArtWorkInfoContainer.setPadding(0, 0, 0, ScreenUtils.getNavigationBarHeightPx());
 
-//        RequestListener<? super String, Bitmap> imageLoadedListener = new RequestListener<String, Bitmap>() {
-//            @Override
-//            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                App.log(TAG, "onResourceReady");
-//                final Bitmap bitmap = resource;
-//                float imageScale = (float) imageZoomView.getHeight() / (float) bitmap.getHeight();
-//                float twentyFourDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
-//                        getResources().getDisplayMetrics());
-//
-//                /** When image is loaded, generate a Palette */
-//                Palette.from(bitmap)
-//                        .maximumColorCount(3)
-//                        .clearFilters()
-//                        .setRegion(0, 0, bitmap.getWidth(), (int) (twentyFourDip * 2)) // todo improve palette read out for determining back button color
-//                        .generate(new Palette.PaletteAsyncListener() {
-//                            @Override
-//                            public void onGenerated(Palette palette) {
-//                                boolean isDark;
-//                                @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
-//                                if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
-//                                    isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
-//                                } else {
-//                                    isDark = lightness == ColorUtils.IS_DARK;
-//                                }
-//                                App.log(TAG, "Palette.onGenerated; isDark = " + isDark);
-//
-//                                if (!isDark) { // make back icon dark on light images
-//                                    App.log(TAG, "setting color filter");
-//                                    // todo keeping back icon white for now
-////                                    mBackButton.setColorFilter(ContextCompat.getColor(
-////                                            ArtWorkDetailViewActivity.this, R.color.dark_icon));
-//                                }
-//
-//                                // possible animation for activity switch
-//                                Interpolator interpolator = AnimationUtils.loadInterpolator(
-//                                        ArtWorkDetailViewActivity.this, android.R.interpolator.fast_out_slow_in);
-//                                mBackButton.animate()
-//                                        .alpha(1f)
-//                                        .setDuration(1200)
-//                                        .setInterpolator(interpolator)
-//                                        .start();
-//                            }
-//                        });
-//
-//                return false;
-//            }
-//        };
-
-        Glide.with(this)
-                .load(mImageUrl)
-                .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
-//                .listener(imageLoadedListener) // inserted for getting a palette
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                        /** When image is loaded set it to the imageZoomView either upscale it, preserving aspect ratio, when there is whitespace
-                         *  or downscale it so that either width or length of image fits screen size */
-                        mArtWorkBitmap = bitmap;
-                        imageZoomView.setImage(ImageSource.bitmap(mArtWorkBitmap));
-                        imageZoomView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-
-                        float scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
-                        // todo adjust for when scale should be set according to width instead of height
-
-                        // Zoom settings
-                        float maxScaleFactor = 8f;
-                        imageZoomView.setMinScale(scale);
-                        imageZoomView.setMaxScale(maxScaleFactor * scale);
-                        imageZoomView.setDoubleTapZoomScale(scale * 4);
-                        imageZoomView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
-
-                        // todo centering view not working as desired
-                        PointF pf = new PointF(0.5f, 0.5f);
-                        imageZoomView.setScaleAndCenter(scale, pf);
-                    }
-                });
+        loadingSpinner.setVisibility(View.VISIBLE);
+        boolean highResImageShouldBeLoaded = ScreenUtils.isTablet(AppContext.getContext());
+        loadImageIntoView(highResImageShouldBeLoaded ? mHighResImageUrl : mImageUrl);
 
         /** Touch event handling:
          *  A GestureDetector(GD) is created to handle more advanced touch event detection
@@ -175,7 +103,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if (imageZoomView.isReady()) {
-//                    PointF sCoord = imageZoomView.viewToSourceCoord(e.getX(), e.getY());
                     mShowUI = !mShowUI;
                     showHideUiOverlay(mShowUI);
                     App.log(TAG, "setting mShowUI to: " + mShowUI);
@@ -287,6 +214,46 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 //                                        }
 //                                    });
 //                        }
+                });
+    }
+
+    public void loadImageIntoView(String imageUrl) {
+        App.log(TAG, "in loadImageIntoView");
+        /*
+        * Load/set normal resolution image before highRes image has been loaded
+        * */
+        Glide.with(this)
+                .load(imageUrl)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        App.log(TAG, "in onResourceReady normal resolution");
+                        loadingSpinner.setVisibility(View.GONE);
+                        /*
+                        * Only set normal resolution image when highRes has not been loaded/cached yet.
+                        * */
+                        /** When image is loaded set it to the imageZoomView either upscale it, preserving aspect ratio, when there is whitespace
+                         *  or downscale it so that either width or length of image fits screen size */
+                        mArtWorkBitmap = bitmap;
+                        imageZoomView.setImage(ImageSource.bitmap(mArtWorkBitmap));
+                        imageZoomView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+
+                        scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
+                        // todo adjust for when scale should be set according to width instead of height
+
+                        // Zoom settings
+                        float maxScaleFactor = 8f;
+                        imageZoomView.setMinScale(scale);
+                        imageZoomView.setMaxScale(maxScaleFactor * scale);
+                        imageZoomView.setDoubleTapZoomScale(scale * 4);
+                        imageZoomView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
+
+                        // todo centering view not working as desired
+                        PointF pf = new PointF(0.5f, 0.5f);
+                        imageZoomView.setScaleAndCenter(scale, pf);
+                    }
                 });
     }
 

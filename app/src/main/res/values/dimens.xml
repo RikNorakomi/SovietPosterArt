@@ -34,4 +34,10 @@
     <dimen name="z_fab_over_touchable_app_bar">9dp</dimen>
 
 
+
+    <dimen name="thumbnail_height_overview_adapter">150dp</dimen>
+
+
+
+
 </resources>

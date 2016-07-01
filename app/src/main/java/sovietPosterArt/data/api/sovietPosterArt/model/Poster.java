@@ -2,6 +2,8 @@ package sovietPosterArt.data.api.sovietPosterArt.model;
 
 import java.io.Serializable;
 
+import sovietPosterArt.utils.App;
+
 /**
  * Created by MEDION on 3-3-2016.
  */
@@ -12,10 +14,12 @@ public class Poster implements Serializable {
 
     private String title;
     private String author;
-    private String image_filepath;
+    private String imageFilepath;
+    private String highResImageFilepath;
     private String filename;
-//    private String category;
+    //    private String category;
     private String year;
+
 
     public String getTitle() {
         return title;
@@ -34,16 +38,40 @@ public class Poster implements Serializable {
     }
 
     public String getFilepath() {
-        return image_filepath;
+        return imageFilepath;
     }
 
+    /**
+     * Returns url for high res or normal res image depending on device
+     * being a tablet or phone respectively
+     */
     public String getImageUrl() {
-        String imageUrl = URL_BASE_PATH + getFilepath();
-        return imageUrl;
+        return URL_BASE_PATH + getFilepath();
+    }
+
+    public String getHighResImageUrl() {
+        // todo refactor: filepathHighRes is file url; normal res is basepath + filepath combined
+        String highResUrl = getFilepathHighResImg();
+        if (highResUrl == null || highResUrl.isEmpty()){
+            return getImageUrl();
+        }
+        return getFilepathHighResImg();
+    }
+
+    /**
+     * For low end devices we could get the 190px thumb
+     */
+    public String getPosterThumbUrl() {
+        String thumbUrl = URL_BASE_PATH + "/img/posters/190px/" + filename;
+        App.log(TAG, "url for thumb: " + thumbUrl);
+        return thumbUrl;
     }
 
     public void setFilepath(String filepath) {
-        this.image_filepath = filepath;
+        if (filepath == null) {
+            filepath = "";
+        }
+        this.imageFilepath = filepath;
     }
 
     public String getFilename() {
@@ -70,12 +98,21 @@ public class Poster implements Serializable {
         this.year = year;
     }
 
+    public void setFilepathHighResImg(String filepathHighResImg) {
+        highResImageFilepath = filepathHighResImg;
+    }
+
+    public String getFilepathHighResImg() {
+        return highResImageFilepath;
+    }
+
+
 //    @Override
 //    public String toString() {
 //        return "Poster{" +
 //                "title='" + title + '\'' +
 //                ", author='" + author + '\'' +
-//                ", filepath='" + image_filepath + '\n' +
+//                ", filepath='" + imageFilepath + '\n' +
 //                ", filename='" + filename + '\n' +
 //                ", category='" + category + '\n' +
 //                ", year='" + year + '\n' +

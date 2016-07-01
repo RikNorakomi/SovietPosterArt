@@ -6,10 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -22,9 +24,10 @@ import sovietPosterArt.data.DataManager;
 import sovietPosterArt.data.api.sovietPosterArt.SovietArtMeService;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
+import sovietPosterArt.data.firebase.SovietArtMePage;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.ui.ArtFeedAdapter;
-import sovietPosterArt.utils.App;
+import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 
 public class MainActivity extends GenericActivity {
@@ -46,34 +49,55 @@ public class MainActivity extends GenericActivity {
         ButterKnife.bind(this);
 
         // setup RecyclerView
+
+        int numberOfColumns = 2;
+        if (ScreenUtils.isTablet(this)){
+            numberOfColumns = 3;
+        }
         mArtFeedAdapter = new ArtFeedAdapter(this);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(numberOfColumns, LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mArtFeedAdapter);
 
-        ScreenUtils.handleUiVisibilityChange(this); // todo remove??
-
-        mDataManager = new DataManager() {
-            @Override
-            public void onDataLoaded(List<? extends Poster> data) {
-                // todo: not working ...check
-                boolean dataNotNull = data != null;
-                App.log(TAG, "setting data on recycler with dataNotNull = " + dataNotNull);
-                mArtFeedAdapter.setArtWorkCollection((ArrayList<Poster>) data);
-            }
-        };
-
-        // todo: move getting data art work data to a dataManager
-//        mDataManager.loadSovietArtMePosters();
-        getPosterData();
-
-//        new FirebaseManager();
+//        getPosterDataViaJSON();
+        getPosterDataViaFirebase();
     }
 
+    public void getPosterDataViaFirebase() {
+        ArrayList<Poster> posters = new ArrayList<>();
 
-    public void getPosterData() { // todo abstract away
+        Firebase posterRefs = new Firebase(Constants.FIREBASE_HOME_POSTERS);
+        posterRefs.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+//                App.log(TAG, "Count = " + dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    SovietArtMePage sovietArtMePage = postSnapshot.getValue(SovietArtMePage.class);
+//                    App.log(TAG, "poster: " + sovietArtMePage.toString());
+
+                    Poster p = new Poster();
+                    p.setAuthor(sovietArtMePage.getAuthor());
+                    p.setFilename(sovietArtMePage.getImageFileName());
+                    p.setFilepath(sovietArtMePage.getImageUrlInfo());
+                    p.setFilepathHighResImg(sovietArtMePage.getHighResImageUrl());
+                    p.setTitle(sovietArtMePage.getTitle());
+                    p.setYear(sovietArtMePage.getYear());
+                    posters.add(p);
+                }
+
+                mArtFeedAdapter.setArtWorkCollection(posters);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }
+
+    public void getPosterDataViaJSON() { // todo abstract away
         new Thread(() -> {
             ArrayList<Poster> posters = new ArrayList<>();
-
 
             String BASE_URL = "http://www.norakomi.com/assets/json";
 
@@ -89,7 +113,7 @@ public class MainActivity extends GenericActivity {
             call.enqueue(new Callback<SovietArtMePosters>() {
                 @Override
                 public void onResponse(Response<SovietArtMePosters> response, Retrofit retrofit) {
-                    App.log(TAG, response.toString());
+//                    App.log(TAG, response.toString());
                     posters.addAll(response.body().posters);
                     mArtFeedAdapter.setArtWorkCollection(posters);
                 }
@@ -101,4 +125,5 @@ public class MainActivity extends GenericActivity {
             });
         }).start();
     }
+
 }

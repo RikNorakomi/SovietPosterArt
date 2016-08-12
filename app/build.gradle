@@ -44,6 +44,10 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
 
     compile 'com.firebase:firebase-client-android:2.5.2+'
+
+
+    // floating action button (FAB) menu with multiple actions
+    compile 'com.getbase:floatingactionbutton:1.10.1'
 }
 
 /**

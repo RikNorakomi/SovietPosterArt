@@ -18,13 +18,19 @@
         <item name="android:windowAnimationStyle">@android:style/Animation</item> <!-- no animations -->
     </style>
 
-
+    <!-- SPLASH SCREEN STYLE -->
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 
         <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <!-- FAB (floating action button) OPEN MENU LABEL STYLE -->
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

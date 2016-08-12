@@ -4,11 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     tools:context="sovietPosterArt.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/overview_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+
+    <!--height navigation bar 48dp
+    http://stackoverflow.com/questions/25603718/android-navigation-bar-size-in-xml
+    margin bottom = 16dp + 48 dp = 64dp
+    -->
+
+    <!-- FAB Menu-->
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/fab_menu_with_multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        fab:fab_addButtonColorNormal="@color/fab_menu_color_default"
+        fab:fab_addButtonColorPressed="@color/fab_menu_color_pressed"
+        fab:fab_addButtonPlusIconColor="@color/fab_menu_plus_icon_color"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        android:layout_marginBottom="64dp"
+        android:layout_marginRight="16dp">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_action_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimaryDark"
+            fab:fab_title="Search Artwork"
+            fab:fab_colorPressed="@color/colorAccentDarker"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_action_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimaryDark"
+            fab:fab_title="Filter category"
+            fab:fab_colorPressed="@color/colorAccentDarker"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </RelativeLayout>

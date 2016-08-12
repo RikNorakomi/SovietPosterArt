@@ -10,6 +10,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.ArrayList;
 
@@ -35,8 +36,10 @@ public class MainActivity extends GenericActivity {
      * MainActivity takes care of displaying the art work overview
      */
 
-    @Bind(R.id.overview_recycler)
-    RecyclerView mRecyclerView;
+    @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
+    @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
+//    @Bind(R.id.fab_menu_action_search) FloatingActionsMenu mFabActionSearch;
+//    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
 
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
@@ -51,12 +54,13 @@ public class MainActivity extends GenericActivity {
         // setup RecyclerView
 
         int numberOfColumns = 2;
-        if (ScreenUtils.isTablet(this)){
+        if (ScreenUtils.isTablet(this)) {
             numberOfColumns = 3;
         }
         mArtFeedAdapter = new ArtFeedAdapter(this);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(numberOfColumns, LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mArtFeedAdapter);
+
 
 //        getPosterDataViaJSON();
         getPosterDataViaFirebase();
@@ -101,10 +105,7 @@ public class MainActivity extends GenericActivity {
 
             String BASE_URL = "http://www.norakomi.com/assets/json";
 
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
 
             // prepare call in Retrofit2
             SovietArtMeService api = retrofit.create(SovietArtMeService.class);

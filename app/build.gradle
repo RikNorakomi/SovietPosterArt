@@ -47,7 +47,15 @@ dependencies {
 
 
     // floating action button (FAB) menu with multiple actions
+    // see: https://github.com/futuresimple/android-floating-action-button/
+    // alternative for this lib. could be: https://github.com/Clans/FloatingActionButton
     compile 'com.getbase:floatingactionbutton:1.10.1'
+
+    // search view library: https://github.com/MiguelCatalan/MaterialSearchView
+    // see also materialdoc.com
+    // for more libraries see: https://android-arsenal.com/tag/208?sort=rating
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
+
 }
 
 /**

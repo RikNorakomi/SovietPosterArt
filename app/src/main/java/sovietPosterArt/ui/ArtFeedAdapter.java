@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import sovietPosterArt.ArtWorkDetailViewActivity;
+import sovietPosterArt.MainActivity;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
@@ -94,6 +95,11 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
             super(itemView);
             ButterKnife.bind(this, itemView);
             artWorkImage.setOnClickListener(view -> {
+                if (((MainActivity) mParentActivity).isFabMenuOpened()) {
+                    App.log(TAG, "fabMenu opened. not selecting art item");
+                    return;
+                }
+
                 Intent intent = new Intent(mParentActivity, ArtWorkDetailViewActivity.class);
                 intent.putExtra(Constants.ART_WORK_OBJECT, mPosters.get(getLayoutPosition()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

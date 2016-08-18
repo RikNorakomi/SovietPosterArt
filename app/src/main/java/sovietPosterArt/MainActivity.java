@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 
@@ -28,21 +31,27 @@ import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
 import sovietPosterArt.data.firebase.SovietArtMePage;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.ui.ArtFeedAdapter;
+import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 
-public class MainActivity extends GenericActivity {
+public class MainActivity extends GenericActivity implements
+        View.OnClickListener,
+        FloatingActionsMenu.OnFloatingActionsMenuUpdateListener {
+
     /**
      * MainActivity takes care of displaying the art work overview
      */
 
     @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
     @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
-//    @Bind(R.id.fab_menu_action_search) FloatingActionsMenu mFabActionSearch;
-//    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
+    @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
+    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
+    @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
 
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
+    private boolean fabMenuOpened = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +60,13 @@ public class MainActivity extends GenericActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        // setup RecyclerView
+        // todo: remove fab on scrolling: http://www.materialdoc.com/scrolling-techniques/
+        mFabMenu.setOnFloatingActionsMenuUpdateListener(this);
+        mFabActionSearch.setOnClickListener(this);
+        mFabActionFilter.setOnClickListener(this);
+        initSearchView();
 
+        // setup RecyclerView
         int numberOfColumns = 2;
         if (ScreenUtils.isTablet(this)) {
             numberOfColumns = 3;
@@ -61,9 +75,40 @@ public class MainActivity extends GenericActivity {
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(numberOfColumns, LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mArtFeedAdapter);
 
-
 //        getPosterDataViaJSON();
         getPosterDataViaFirebase();
+    }
+
+    private void initSearchView() {
+        // documentation: https://github.com/MiguelCatalan/MaterialSearchView
+        mMaterialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        mMaterialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
+        mMaterialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+
+        // todo
+//        mMaterialSearchView.setVoiceSearch(true); //or false
     }
 
     public void getPosterDataViaFirebase() {
@@ -127,4 +172,51 @@ public class MainActivity extends GenericActivity {
         }).start();
     }
 
+    @Override
+    public void onClick(View v) {
+        App.log(TAG, "in onClick v=" + v.getId());
+        switch (v.getId()) {
+            case R.id.fab_menu_action_filter:
+                // it was the second button
+                App.log(TAG, "fab_menu_action_filter");
+                break;
+            case R.id.fab_menu_action_search:
+                // it was the second button
+                mFabMenu.collapse();
+                mFabMenu.postDelayed(() -> mMaterialSearchView.showSearch(), 250); // mimic finish animation before showing search view
+                App.log(TAG, "fab_menu_action_search");
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mMaterialSearchView.isSearchOpen()) {
+            mMaterialSearchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onMenuExpanded() {
+        App.log(TAG, "in onMenuExpanded");
+        fabMenuOpened = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        ButterKnife.unbind(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onMenuCollapsed() {
+        App.log(TAG, "in onMenuCollapsed");
+        fabMenuOpened = false;
+    }
+
+    public boolean isFabMenuOpened() {
+        return fabMenuOpened;
+    }
 }

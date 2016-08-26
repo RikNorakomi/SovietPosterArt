@@ -10,6 +10,7 @@
     <color name="deepDarkRed">#ff440000</color>
     <color name="deepDarkRed88">#cc440000</color>
     <color name="deepDarkerRed">#ff220000</color>
+    <color name="deepDarkerRed88">#cc220000</color>
 
     <color name="mid_grey">#90808080</color>
     <color name="light_grey">#80f5f5f5</color>

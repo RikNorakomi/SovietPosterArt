@@ -55,11 +55,26 @@
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-    <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:id="@+id/search_view"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:minHeight="80dp"
-        android:layout_height="wrap_content" />
+
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:alpha="0.92"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:fitsSystemWindows="true"
+            android:minHeight="80dp"/>
+
+        <!--<View-->
+
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:layout_above="@id/search_view"-->
+            <!--android:background="@color/white_pressed">-->
+
+        <!--</View>-->
+
 
 </RelativeLayout>

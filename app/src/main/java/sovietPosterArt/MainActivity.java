@@ -25,6 +25,7 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 import sovietPosterArt.data.DataManager;
+import sovietPosterArt.data.SearchAdapter;
 import sovietPosterArt.data.api.sovietPosterArt.SovietArtMeService;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
@@ -104,8 +105,10 @@ public class MainActivity extends GenericActivity implements
                 //Do some magic
             }
         });
+        // searchSuggestion are being set in the SearchAdapter
 
-        mMaterialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+//        mMaterialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+//        mMaterialSearchView.setBackgroundColor(getResources().getColor(R.color.deepDarkerRed88));
 
         // todo
 //        mMaterialSearchView.setVoiceSearch(true); //or false
@@ -134,6 +137,8 @@ public class MainActivity extends GenericActivity implements
                 }
 
                 mArtFeedAdapter.setArtWorkCollection(posters);
+                SearchAdapter.getInstance().setSearchSuggestionData(posters, mMaterialSearchView);
+
             }
 
             @Override

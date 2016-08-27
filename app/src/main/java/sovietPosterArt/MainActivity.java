@@ -1,10 +1,13 @@
 package sovietPosterArt;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -16,6 +19,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,6 +53,7 @@ public class MainActivity extends GenericActivity implements
     @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
     @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
     @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
+    @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
 
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
@@ -82,14 +87,35 @@ public class MainActivity extends GenericActivity implements
 
     private void initSearchView() {
         // documentation: https://github.com/MiguelCatalan/MaterialSearchView
+        mMaterialSearchView.setSubmitOnClick(true);
+        mMaterialSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                App.log(TAG, "id= " + id);
+                Object item = parent.getItemAtPosition(position);
+                App.log(TAG, " item = " + item.toString());
+            }
+        });
         mMaterialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                App.log(TAG, "query submitted: " + query);
+                if (query.isEmpty()) { // todo query is not executed when query field is empty
+                    mMaterialSearchView.setHint("Please enter a search query or close search view!");
+                    mMaterialSearchView.setHintTextColor(getResources().getColor(R.color.deepDarkRed));
+                } else {
+                    handleSearchQuery(query);
+                }
+
+
+                // returning true will leave search components on UI
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+                App.log(TAG, "onQueryTextChange");
                 return false;
             }
         });
@@ -97,12 +123,12 @@ public class MainActivity extends GenericActivity implements
         mMaterialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
-                //Do some magic
+                mStatusBarUnderlay.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onSearchViewClosed() {
-                //Do some magic
+                mStatusBarUnderlay.setVisibility(View.GONE);
             }
         });
         // searchSuggestion are being set in the SearchAdapter
@@ -112,6 +138,41 @@ public class MainActivity extends GenericActivity implements
 
         // todo
 //        mMaterialSearchView.setVoiceSearch(true); //or false
+
+        // todo: statusbar underlay height is now set fixed to 25dp in xml;
+        // todo: better is to set it manually and get height from system somewhat like code below
+//        int height = ScreenUtils.getStatusBarHeightPx();
+//
+//        // set height of the view under status bar, when search view expands, manually.
+//        mStatusBarUnderlay.setLayoutParams(
+//                new LinearLayout.LayoutParams(
+//                200,
+//                height)
+//        );
+    }
+
+    private void handleSearchQuery(String query) {
+        App.log(TAG, "in handleSearchQUery: " + query);
+        List<Poster> posters = SearchAdapter.getInstance().doSearchQuery(query);
+
+
+        if (posters.size() == 1) {
+            // Go to detail view to display the poster
+            //todo
+            Intent intent = new Intent(this, ArtWorkDetailViewActivity.class);
+            intent.putExtra(Constants.ART_WORK_OBJECT, posters.get(0));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+        } else if (posters.size() > 1) {
+            // Set poster on Recycler View
+            mArtFeedAdapter.setQueryResult(posters);
+
+        } else if (posters.size() == 0) {
+            App.logError(TAG, "search query returned 0 posters!! Should not happen");
+        }
+
+
     }
 
     public void getPosterDataViaFirebase() {
@@ -188,8 +249,17 @@ public class MainActivity extends GenericActivity implements
             case R.id.fab_menu_action_search:
                 // it was the second button
                 mFabMenu.collapse();
-                mFabMenu.postDelayed(() -> mMaterialSearchView.showSearch(), 250); // mimic finish animation before showing search view
+                mFabMenu.postDelayed(() -> {
+                    mMaterialSearchView.showSearch();
+
+                }, 250); // mimic finish animation before showing search view
                 App.log(TAG, "fab_menu_action_search");
+                break;
+            case R.id.fab_menu_show_all:
+                // re-populate recycler view with full art collection (after search query...)
+                mArtFeedAdapter.resetBackToFullCollection();
+                mFabMenu.postDelayed(() -> mFabMenu.collapse(), 250);
+                App.log(TAG, "resetting back to show full art collection");
                 break;
         }
     }
@@ -210,15 +280,15 @@ public class MainActivity extends GenericActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        ButterKnife.unbind(this);
-        super.onDestroy();
-    }
-
-    @Override
     public void onMenuCollapsed() {
         App.log(TAG, "in onMenuCollapsed");
         fabMenuOpened = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        ButterKnife.unbind(this);
+        super.onDestroy();
     }
 
     public boolean isFabMenuOpened() {

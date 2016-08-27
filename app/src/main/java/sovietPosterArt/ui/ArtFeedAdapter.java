@@ -19,6 +19,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,15 +34,30 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     private final String TAG = getClass().getSimpleName();
     private Activity mParentActivity = null;
     private ArrayList<Poster> mPosters = new ArrayList<>();
+    private ArrayList<Poster> mFullArtWorkCollection = new ArrayList<>();
 
     public ArtFeedAdapter(Activity parentActivity) {
         mParentActivity = parentActivity;
     }
 
-    public void setArtWorkCollection(ArrayList<Poster> data) {
+    public void setArtWorkCollection(ArrayList<Poster> artWorkCollection) {
+        this.mFullArtWorkCollection.addAll(artWorkCollection);
         mPosters.clear();
-        mPosters.addAll(data);
+        mPosters.addAll(artWorkCollection);
         notifyDataSetChanged();
+    }
+
+    public void setQueryResult (List<Poster> artWorkCollection){
+        mPosters.clear();
+        mPosters.addAll(artWorkCollection);
+        notifyDataSetChanged();
+    }
+
+    public void resetBackToFullCollection (){
+        mPosters.clear();
+        mPosters.addAll(mFullArtWorkCollection);
+        notifyDataSetChanged();
+
     }
 
     @Override

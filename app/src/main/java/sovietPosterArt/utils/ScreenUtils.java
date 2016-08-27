@@ -24,7 +24,7 @@ public class ScreenUtils {
         Resources resources = getContext().getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
-            App.log(TAG,"getNavigationBarHeightPx: navigation bar height = " + resources.getDimensionPixelSize(resourceId));
+            App.log(TAG, "getNavigationBarHeightPx: navigation bar height = " + resources.getDimensionPixelSize(resourceId));
             return resources.getDimensionPixelSize(resourceId);
         }
 
@@ -38,11 +38,16 @@ public class ScreenUtils {
         if (resourceId > 0) {
             result = getContext().getResources().getDimensionPixelSize(resourceId);
         }
+
+        if (result == 0) {
+            // if we can't get result from system we'll assume statusbar has the standard hieght of 25dp
+            result = dpToPx(25);
+        }
         App.log(TAG, "getStatusBarHeightPx = " + result);
         return result;
     }
 
-    public static void setMargins (View v, int l, int t, int r, int b) {
+    public static void setMargins(View v, int l, int t, int r, int b) {
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
             p.setMargins(l, t, r, b);
@@ -74,7 +79,7 @@ public class ScreenUtils {
 
     // http://stackoverflow.com/questions/2801116/converting-a-view-to-bitmap-without-displaying-it-in-android
     public static Bitmap loadBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
         v.draw(c);
@@ -120,10 +125,9 @@ public class ScreenUtils {
         }
     }
 
-    public static int dpToPx(int dp)
-    {
+    public static int dpToPx(int dp) {
         float density = getContext().getResources().getDisplayMetrics().density;
-        return Math.round((float)dp * density);
+        return Math.round((float) dp * density);
     }
 
     public static int getScreenHeightPx() {

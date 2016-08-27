@@ -53,28 +53,40 @@
             fab:fab_icon="@drawable/ic_filter_list_white_24dp"
             fab:fab_title="Filter category"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_show_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimaryDark"
+            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_icon="@drawable/ic_settings_backup_restore_white_24dp"
+            fab:fab_title="Filter category"/>
+
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
+    <!-- Gets shown when search view becomes visible -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/status_bar_underlay"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:fitsSystemWindows="false"
+        android:background="@color/white_underlay_statusbar">
+    </LinearLayout>
+
+    <!-- https://github.com/MiguelCatalan/MaterialSearchView -->
+    <com.miguelcatalan.materialsearchview.MaterialSearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:alpha="0.92"
+        android:fitsSystemWindows="true"
+        android:minHeight="80dp"/>
 
 
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:alpha="0.92"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:fitsSystemWindows="true"
-            android:minHeight="80dp"/>
-
-        <!--<View-->
-
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="48dp"-->
-            <!--android:layout_above="@id/search_view"-->
-            <!--android:background="@color/white_pressed">-->
-
-        <!--</View>-->
 
 
 </RelativeLayout>

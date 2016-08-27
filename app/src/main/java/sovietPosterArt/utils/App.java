@@ -12,6 +12,10 @@ public class App {
     }
 
     public static void log(String tag, String string) {
+        Log.v(tag, string);
+    }
+
+    public static void logError(String tag, String string) {
         Log.e(tag, string);
     }
 

@@ -28,6 +28,7 @@
     <color name="fab_menu_plus_icon_color">@color/white</color>
     <color name="fab_menu_opened_label_color_black_semi_transparent">@color/deepDarkRed88</color>
     <color name="white_pressed">#f1f1f1</color>
+    <color name="white_underlay_statusbar">#ccffffff</color>
 
     <!-- Dummy Recycler colors -->
     <color name="recycler_background_grey">#FF676767</color>

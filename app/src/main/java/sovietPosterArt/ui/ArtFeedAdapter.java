@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -120,6 +121,13 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mPosters.size();
+    }
+
+    public Poster getRandomPoster() {
+        Random randomGenerator = new Random();
+        int index = randomGenerator.nextInt(mFullArtWorkCollection.size());
+        Poster poster  = mFullArtWorkCollection.get(index);
+        return poster;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

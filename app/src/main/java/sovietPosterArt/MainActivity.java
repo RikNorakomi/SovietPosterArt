@@ -53,6 +53,7 @@ public class MainActivity extends GenericActivity implements
     @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
     @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
     @Bind(R.id.fab_menu_action_show_all) FloatingActionButton mFabActionShowAll;
+    @Bind(R.id.fab_menu_action_show_random_poster) FloatingActionButton mFabActionShowRandomPoster;
     @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
     @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
 
@@ -73,6 +74,7 @@ public class MainActivity extends GenericActivity implements
         mFabActionSearch.setOnClickListener(this);
         mFabActionFilter.setOnClickListener(this);
         mFabActionShowAll.setOnClickListener(this);
+        mFabActionShowRandomPoster.setOnClickListener(this);
         initSearchView();
 
         // setup RecyclerView
@@ -149,7 +151,7 @@ public class MainActivity extends GenericActivity implements
     private void handleSearchQuery(String query) {
         App.log(TAG, "in handleSearchQUery: " + query);
         List<Poster> posters = SearchAdapter.getInstance().doSearchQuery(query);
-        final Context context = this;
+
 
         if (posters.size() == 1) {
             // Go to detail view to display the poster
@@ -158,12 +160,9 @@ public class MainActivity extends GenericActivity implements
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(context, ArtWorkDetailViewActivity.class);
-                    intent.putExtra(Constants.ART_WORK_OBJECT, posters.get(0));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    startDetailActivity(posters.get(0));
                 }
-            },500);
+            }, 500);
 
 
         } else if (posters.size() > 1) {
@@ -175,6 +174,14 @@ public class MainActivity extends GenericActivity implements
         }
 
 
+    }
+
+    private void startDetailActivity(Poster poster) {
+        final Context context = this;
+        Intent intent = new Intent(context, ArtWorkDetailViewActivity.class);
+        intent.putExtra(Constants.ART_WORK_OBJECT, poster);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void getPosterDataViaFirebase() {
@@ -267,6 +274,18 @@ public class MainActivity extends GenericActivity implements
                 mFabMenu.postDelayed(() -> {
                     mArtFeedAdapter.resetBackToFullCollection();
                 }, 1000);
+                App.log(TAG, "resetting back to show full art collection");
+                break;
+            case R.id.fab_menu_action_show_random_poster:
+                mFabMenu.postDelayed(() -> {
+                    mFabMenu.collapse();
+                    Poster poster = mArtFeedAdapter.getRandomPoster();
+                    mFabMenu.postDelayed(() -> {
+                        startDetailActivity(poster);
+                    }, 500); // mimic wait till keyboard collapsed so that navigation bar can be removed in detail screen
+
+                }, 250); // mimic finish animation before showing clearing
+
                 App.log(TAG, "resetting back to show full art collection");
                 break;
         }

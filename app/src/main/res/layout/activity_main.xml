@@ -37,6 +37,15 @@
         fab:fab_labelStyle="@style/menu_labels_style">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_action_show_random_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimaryDark"
+            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_icon="@drawable/ic_help_outline_white_24dp"
+            fab:fab_title="Show a random poster"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_menu_action_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

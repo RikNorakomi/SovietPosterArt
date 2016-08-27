@@ -282,7 +282,7 @@ public class MainActivity extends GenericActivity implements
                     Poster poster = mArtFeedAdapter.getRandomPoster();
                     mFabMenu.postDelayed(() -> {
                         startDetailActivity(poster);
-                    }, 500); // mimic wait till keyboard collapsed so that navigation bar can be removed in detail screen
+                    }, 350); // mimic wait till keyboard collapsed so that navigation bar can be removed in detail screen
 
                 }, 250); // mimic finish animation before showing clearing
 

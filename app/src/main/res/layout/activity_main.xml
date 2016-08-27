@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/deepDarkerRed"
     tools:context="sovietPosterArt.MainActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -36,15 +37,6 @@
         fab:fab_labelStyle="@style/menu_labels_style">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_menu_action_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorAccentDarker"
-            fab:fab_icon="@drawable/ic_search_white_24dp"
-            fab:fab_title="Search Artwork"/>
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_menu_action_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,13 +46,22 @@
             fab:fab_title="Filter category"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_menu_show_all"
+            android:id="@+id/fab_menu_action_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorPrimaryDark"
+            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_icon="@drawable/ic_search_white_24dp"
+            fab:fab_title="Search Artwork"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_action_show_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimaryDark"
             fab:fab_colorPressed="@color/colorAccentDarker"
             fab:fab_icon="@drawable/ic_settings_backup_restore_white_24dp"
-            fab:fab_title="Filter category"/>
+            fab:fab_title="Show all posters"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

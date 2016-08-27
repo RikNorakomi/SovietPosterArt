@@ -1,12 +1,12 @@
 package sovietPosterArt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -52,12 +52,14 @@ public class MainActivity extends GenericActivity implements
     @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
     @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
     @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
+    @Bind(R.id.fab_menu_action_show_all) FloatingActionButton mFabActionShowAll;
     @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
     @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
 
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
     private boolean fabMenuOpened = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class MainActivity extends GenericActivity implements
         mFabMenu.setOnFloatingActionsMenuUpdateListener(this);
         mFabActionSearch.setOnClickListener(this);
         mFabActionFilter.setOnClickListener(this);
+        mFabActionShowAll.setOnClickListener(this);
         initSearchView();
 
         // setup RecyclerView
@@ -88,14 +91,6 @@ public class MainActivity extends GenericActivity implements
     private void initSearchView() {
         // documentation: https://github.com/MiguelCatalan/MaterialSearchView
         mMaterialSearchView.setSubmitOnClick(true);
-        mMaterialSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                App.log(TAG, "id= " + id);
-                Object item = parent.getItemAtPosition(position);
-                App.log(TAG, " item = " + item.toString());
-            }
-        });
         mMaterialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -109,7 +104,7 @@ public class MainActivity extends GenericActivity implements
 
 
                 // returning true will leave search components on UI
-                return true;
+                return false;
             }
 
             @Override
@@ -154,15 +149,22 @@ public class MainActivity extends GenericActivity implements
     private void handleSearchQuery(String query) {
         App.log(TAG, "in handleSearchQUery: " + query);
         List<Poster> posters = SearchAdapter.getInstance().doSearchQuery(query);
-
+        final Context context = this;
 
         if (posters.size() == 1) {
             // Go to detail view to display the poster
-            //todo
-            Intent intent = new Intent(this, ArtWorkDetailViewActivity.class);
-            intent.putExtra(Constants.ART_WORK_OBJECT, posters.get(0));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            //todo: we're mimicing waiting for keyboard to be removed here, otherwise
+            // todo: navigation bar won't be removed in detail screen. But really we should use a listener
+            mRecyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(context, ArtWorkDetailViewActivity.class);
+                    intent.putExtra(Constants.ART_WORK_OBJECT, posters.get(0));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            },500);
+
 
         } else if (posters.size() > 1) {
             // Set poster on Recycler View
@@ -255,10 +257,16 @@ public class MainActivity extends GenericActivity implements
                 }, 250); // mimic finish animation before showing search view
                 App.log(TAG, "fab_menu_action_search");
                 break;
-            case R.id.fab_menu_show_all:
+            case R.id.fab_menu_action_show_all:
                 // re-populate recycler view with full art collection (after search query...)
-                mArtFeedAdapter.resetBackToFullCollection();
-                mFabMenu.postDelayed(() -> mFabMenu.collapse(), 250);
+
+                mFabMenu.postDelayed(() -> {
+                    mFabMenu.collapse();
+                    mArtFeedAdapter.clearCollection();
+                }, 250); // mimic finish animation before showing clearing
+                mFabMenu.postDelayed(() -> {
+                    mArtFeedAdapter.resetBackToFullCollection();
+                }, 1000);
                 App.log(TAG, "resetting back to show full art collection");
                 break;
         }
@@ -267,8 +275,12 @@ public class MainActivity extends GenericActivity implements
     @Override
     public void onBackPressed() {
         if (mMaterialSearchView.isSearchOpen()) {
+            App.log(TAG, "onBackPressed: search is open");
             mMaterialSearchView.closeSearch();
+        } else if (mFabMenu.isExpanded()) {
+            mFabMenu.collapse();
         } else {
+            App.log(TAG, "onBackPressed: search is NOT open");
             super.onBackPressed();
         }
     }
@@ -277,6 +289,9 @@ public class MainActivity extends GenericActivity implements
     public void onMenuExpanded() {
         App.log(TAG, "in onMenuExpanded");
         fabMenuOpened = true;
+
+        boolean fullCollectionShown = mArtFeedAdapter.isFullArtWorkCollectionShown();
+        findViewById(R.id.fab_menu_action_show_all).setVisibility(fullCollectionShown ? View.GONE : View.VISIBLE);
     }
 
     @Override

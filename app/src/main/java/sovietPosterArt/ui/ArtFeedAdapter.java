@@ -29,9 +29,14 @@ import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
+import sovietPosterArt.utils.JavaUtils;
 
 public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
+
     private final String TAG = getClass().getSimpleName();
+
+    private boolean fullArtWorkCollectionShown = true;
+
     private Activity mParentActivity = null;
     private ArrayList<Poster> mPosters = new ArrayList<>();
     private ArrayList<Poster> mFullArtWorkCollection = new ArrayList<>();
@@ -41,23 +46,37 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     public void setArtWorkCollection(ArrayList<Poster> artWorkCollection) {
+        // randomizing collection to not always have same art work at start of overview when app starts
+        JavaUtils.randomizeArrayList(artWorkCollection);
+
         this.mFullArtWorkCollection.addAll(artWorkCollection);
         mPosters.clear();
         mPosters.addAll(artWorkCollection);
+        fullArtWorkCollectionShown = true;
         notifyDataSetChanged();
     }
 
     public void setQueryResult (List<Poster> artWorkCollection){
         mPosters.clear();
         mPosters.addAll(artWorkCollection);
+        fullArtWorkCollectionShown = false;
         notifyDataSetChanged();
     }
 
     public void resetBackToFullCollection (){
         mPosters.clear();
         mPosters.addAll(mFullArtWorkCollection);
+        fullArtWorkCollectionShown = true;
         notifyDataSetChanged();
+    }
 
+    public void clearCollection(){
+        mPosters.clear();
+        notifyDataSetChanged();
+    }
+
+    public boolean isFullArtWorkCollectionShown(){
+        return fullArtWorkCollectionShown;
     }
 
     @Override

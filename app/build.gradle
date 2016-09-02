@@ -1,4 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
@@ -55,6 +70,12 @@ dependencies {
     // see also materialdoc.com
     // for more libraries see: https://android-arsenal.com/tag/208?sort=rating
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
+
+
+    // fabric crashLytics: https://www.fabric.io/norakomi
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
+        transitive = true;
+    }
 
 }
 

@@ -2,6 +2,8 @@ package sovietPosterArt.utils;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * Created by MEDION on 7-1-2016.
  */
@@ -18,6 +20,13 @@ public class App {
     public static void logError(String tag, String string) {
         Log.e(tag, string);
     }
+
+    public static void logError(String tag, String msg, Throwable t) {
+        Log.e(tag, msg);
+        Crashlytics.logException(new Throwable(msg, t));
+    }
+
+
 
     public static void logCurrentMethod() {
         Log.e("App", getCurrentMethodName());

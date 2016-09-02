@@ -3,7 +3,9 @@
     package="sovietPosterArt.sovietPosterArt"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -17,7 +19,7 @@
         </activity>
 
         <activity
-            android:name="sovietPosterArt.SplashActivity"
+            android:name="sovietPosterArt.StartUpActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -41,6 +43,13 @@
                 android:resource="@xml/filepaths"/>
         </provider>
 
+
+        <!--keeping api keys out of public repo:
+            http://stackoverflow.com/questions/13979049/edit-an-androidmanifest-when-compiling-to-remove-api-key-->
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="@string/fabric_api_key" />
     </application>
 
 

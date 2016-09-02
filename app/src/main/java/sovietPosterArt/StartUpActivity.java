@@ -5,6 +5,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+import sovietPosterArt.utils.IdUtils;
+
 /**
  * Created by Rik van Velzen, Norakomi.com, on 6-4-2016.
  * <p>
@@ -16,13 +21,15 @@ import android.support.v7.app.AppCompatActivity;
  * More info on adding a splash screen:
  * https://www.bignerdranch.com/blog/splash-screens-the-right-way/
  */
-public class SplashActivity extends AppCompatActivity {
+public class StartUpActivity extends AppCompatActivity {
 
     // todo: think about adding start pre-loading image thumbs in this activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initThirdPartySDKsOnBackgroundThread();
 
         Intent intent = new Intent(this, MainActivity.class);
 
@@ -37,7 +44,20 @@ public class SplashActivity extends AppCompatActivity {
             // todo: animation on recycler view
 
         }, delayTimeMs);
+    }
 
+    private void initThirdPartySDKsOnBackgroundThread() {
+        new Thread(this::initCrashLytics).start();
+    }
 
+    private void initCrashLytics() {
+        Fabric.with(this, new Crashlytics());
+
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        // Crashlytics.setUserEmail("user@fabric.io");
+        // Crashlytics.setUserName("Test User");Crashlytics.setUserIdentifier(IdUtils.getUDID());
+        Crashlytics.setString("IMEI", IdUtils.getIMEI());
+        Crashlytics.setString("WLAN_MAC", IdUtils.getWLANMAC());
     }
 }

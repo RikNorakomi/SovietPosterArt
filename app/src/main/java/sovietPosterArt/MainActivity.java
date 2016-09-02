@@ -61,7 +61,6 @@ public class MainActivity extends GenericActivity implements
     private DataManager mDataManager;
     private boolean fabMenuOpened = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

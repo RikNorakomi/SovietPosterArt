@@ -1,5 +1,6 @@
 *.iml
 .idea/*.xml
+api_keys.xml
 /.gradle
 .gitignore
 <<<<<<< HEAD
@@ -22,5 +23,4 @@ local.properties
 /captures
 .idea/.name
 app/app-release.apk
-screenshots/diy-office-woodworking-ergonomic-computer-desk.jpg
-screenshots/ehlers-desk-step06.jpg
+

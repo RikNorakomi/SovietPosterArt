@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "899732683963",
+    "firebase_url": "https://sovietposterart.firebaseio.com",
+    "project_id": "sovietposterart",
+    "storage_bucket": "sovietposterart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899732683963:android:0861ffb8f49a4b98",
+        "android_client_info": {
+          "package_name": "sovietPosterArt.sovietPosterArt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899732683963-n1vbv2tkra3r8k91ibam1thch9i4q6op.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbfpKoCe2fzKf8L2KV9JzmtEnrVYUTFLk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

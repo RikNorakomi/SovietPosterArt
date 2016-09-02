@@ -1,6 +1,6 @@
 *.iml
 .idea/*.xml
-api_keys.xml
+keys.xml
 /.gradle
 .gitignore
 <<<<<<< HEAD

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+import sovietPosterArt.utils.AppContext;
 import sovietPosterArt.utils.IdUtils;
 
 /**
@@ -31,14 +32,20 @@ public class StartUpActivity extends AppCompatActivity {
 
         initThirdPartySDKsOnBackgroundThread();
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(AppContext.getContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         int delayTimeMs = 1400;
         Handler handler = new Handler();
 
         handler.postDelayed(() -> {
-            startActivity(intent);
-            handler.postDelayed(this::finish, 500);
+            AppContext.getContext().startActivity(intent);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 500);
 
             // todo: come up with nice transition to main activity screen probably slide use slide in from bottom
             // todo: animation on recycler view
@@ -47,16 +54,17 @@ public class StartUpActivity extends AppCompatActivity {
     }
 
     private void initThirdPartySDKsOnBackgroundThread() {
-        new Thread(this::initCrashLytics).start();
+        new Thread(this::initCrashlytics).start();
     }
 
-    private void initCrashLytics() {
+    private void initCrashlytics() {
         Fabric.with(this, new Crashlytics());
 
         // TODO: Use the current user's information
         // You can call any combination of these three methods
         // Crashlytics.setUserEmail("user@fabric.io");
-        // Crashlytics.setUserName("Test User");Crashlytics.setUserIdentifier(IdUtils.getUDID());
+        // Crashlytics.setUserName("Test User");
+        Crashlytics.setUserIdentifier(IdUtils.getUDID());
         Crashlytics.setString("IMEI", IdUtils.getIMEI());
         Crashlytics.setString("WLAN_MAC", IdUtils.getWLANMAC());
     }

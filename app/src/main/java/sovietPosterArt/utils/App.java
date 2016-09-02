@@ -9,27 +9,29 @@ import com.crashlytics.android.Crashlytics;
  */
 public class App {
 
+    private final static String PRE_TAG = "Soviet: ";
+
     public static void log(String string) {
         Log.e("", string);
     }
 
     public static void log(String tag, String string) {
-        Log.v(tag, string);
+        Log.v(PRE_TAG + tag, string);
     }
 
     public static void logError(String tag, String string) {
-        Log.e(tag, string);
+        Log.e(PRE_TAG + tag, string);
     }
 
     public static void logError(String tag, String msg, Throwable t) {
-        Log.e(tag, msg);
+        Log.e(PRE_TAG + tag, msg);
         Crashlytics.logException(new Throwable(msg, t));
     }
 
 
 
     public static void logCurrentMethod() {
-        Log.e("App", getCurrentMethodName());
+        Log.e(PRE_TAG, getCurrentMethodName());
     }
 
     public static String getCurrentMethodName() {

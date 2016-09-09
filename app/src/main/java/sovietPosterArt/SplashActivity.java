@@ -37,7 +37,5 @@ public class SplashActivity extends AppCompatActivity {
             // todo: animation on recycler view
 
         }, delayTimeMs);
-
-
     }
 }

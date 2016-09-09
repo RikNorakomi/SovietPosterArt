@@ -49,6 +49,11 @@ public class Poster implements Serializable {
         return URL_BASE_PATH + getFilepath();
     }
 
+    public String getThumbnailUrl() {
+        return URL_BASE_PATH + "/img/posters/190px/" + filename;
+
+    }
+
     public String getHighResImageUrl() {
         // todo refactor: filepathHighRes is file url; normal res is basepath + filepath combined
         String highResUrl = getFilepathHighResImg();

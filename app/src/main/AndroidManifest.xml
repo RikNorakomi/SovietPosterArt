@@ -27,6 +27,7 @@
 
         <activity
             android:name="sovietPosterArt.ArtWorkDetailViewActivity"
+            android:parentActivityName="sovietPosterArt.MainActivity"
             android:label="@string/app_name">
         </activity>
 

@@ -29,7 +29,6 @@ import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
-import sovietPosterArt.utils.AppContext;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -50,7 +49,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private String mImageUrl;
     private String mHighResImageUrl;
     private Poster mArtWork;
-    private boolean highResImageLoaded = false;
+    private boolean loadHighResImage = false;
 
 
     @Bind(R.id.container)
@@ -82,7 +81,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
         mShowUI = true;
         mArtWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
-        mImageUrl = mArtWork.getHighResImageUrl();
+        mImageUrl = mArtWork.getImageUrl();
         mHighResImageUrl = mArtWork.getHighResImageUrl();
 
 
@@ -93,8 +92,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         });
 
         loadingSpinner.setVisibility(View.VISIBLE);
-        boolean highResImageShouldBeLoaded = ScreenUtils.isTablet(AppContext.getContext());
-        loadImageIntoView(highResImageShouldBeLoaded ? mHighResImageUrl : mImageUrl);
+        loadImageIntoView(loadHighResImage ? mHighResImageUrl : mImageUrl);
 
         /** Touch event handling:
          *  A GestureDetector(GD) is created to handle more advanced touch event detection
@@ -169,7 +167,10 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                 .alpha(1f)
                                 .translationY(mShowUI ? 1 : metadataSlideDistance)
                                 .setDuration(animationDuration)
-                                .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
+                                .withEndAction(() -> {
+                                    App.log(TAG, "finish() EndACtion in animation");
+
+                                });
                         mStatusBarScrimView.animate()
                                 .alpha(1f)
                                 .setDuration(animationDuration);
@@ -218,14 +219,15 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     }
 
     public void loadImageIntoView(String imageUrl) {
-        App.log(TAG, "in loadImageIntoView");
+        App.log(TAG, "in loadImageIntoView for url: " + imageUrl);
         /*
         * Load/set normal resolution image before highRes image has been loaded
         * */
         Glide.with(this)
                 .load(imageUrl)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
+                .thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT) // todo: look into cache starts
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
@@ -273,6 +275,11 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                 case R.id.action_share_artwork:
                     new ShareArtworkTask(this, mArtWork);
                     return true;
+                case R.id.action_enable_highres_loading:
+                    App.toast("touched set high res enable");
+                    return true;
+                default:
+                    App.logError(TAG, "Couldn't retreive id for overflow menu clicked. Id= " + menuItem.getItemId());
             }
             return false;
         });

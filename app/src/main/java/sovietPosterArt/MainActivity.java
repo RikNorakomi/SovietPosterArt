@@ -35,7 +35,6 @@ import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.data.api.sovietPosterArt.model.SovietArtMePosters;
 import sovietPosterArt.data.firebase.SovietArtMePage;
 import sovietPosterArt.sovietPosterArt.R;
-import sovietPosterArt.ui.ArtFeedAdapter;
 import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
@@ -46,6 +45,7 @@ public class MainActivity extends GenericActivity implements
 
     /**
      * MainActivity takes care of displaying the art work overview
+     * See also: https://dazzling-inferno-8912.firebaseio.com/posters
      */
 
     @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
@@ -60,6 +60,7 @@ public class MainActivity extends GenericActivity implements
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
     private boolean fabMenuOpened = false;
+    private long backButtonClickTime = 0;
 
 
     @Override
@@ -300,7 +301,17 @@ public class MainActivity extends GenericActivity implements
             mFabMenu.collapse();
         } else {
             App.log(TAG, "onBackPressed: search is NOT open");
-            super.onBackPressed();
+
+            long timestamp = System.currentTimeMillis();
+
+        /* App exit can only be performed by double clicking on back within specified milliSecs. */
+            if (timestamp - backButtonClickTime <= 5000) {
+                backButtonClickTime = 0;
+                super.onBackPressed();
+            } else {
+                backButtonClickTime = timestamp;
+                Toast.makeText(this, "Press again to leave app", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -321,8 +332,15 @@ public class MainActivity extends GenericActivity implements
 
     @Override
     protected void onDestroy() {
-        ButterKnife.unbind(this);
+        App.log(TAG, "in OnDestroy");
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        App.log(TAG, "in onStop");
+        ButterKnife.unbind(this);
+        super.onStop();
     }
 
     public boolean isFabMenuOpened() {

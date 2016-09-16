@@ -48,7 +48,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private String mImageUrl;
     private String mHighResImageUrl;
     private Poster mArtWork;
-    private boolean loadHighResImage = false;
 
 
     //    @Bind(R.id.container)
@@ -68,6 +67,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     ProgressBar loadingSpinner;
     private float scale = 1;
     private boolean shouldDownloadHRImages;
+    private boolean highResImageSet = false;
 
 
     @Override
@@ -105,7 +105,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         });
 
         loadingSpinner.setVisibility(View.VISIBLE);
-        loadImageIntoView(loadHighResImage ? mHighResImageUrl : mImageUrl);
+        loadImageIntoView(mImageUrl);
 
         /** Touch event handling:
          *  A GestureDetector(GD) is created to handle more advanced touch event detection
@@ -246,6 +246,10 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                         App.log(TAG, "in onResourceReady normal resolution");
                         loadingSpinner.setVisibility(View.GONE);
+                        if (highResImageSet) {
+                            App.logError(TAG, "!!!highResImage already set on imageView. Nop need to set lowRes");
+                            return;
+                        }
                         /*
                         * Only set normal resolution image when highRes has not been loaded/cached yet.
                         * */
@@ -270,6 +274,48 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                         imageZoomView.setScaleAndCenter(scale, pf);
                     }
                 });
+
+        if (shouldDownloadHRImages) {
+            if (mHighResImageUrl == null || mHighResImageUrl.isEmpty()) {
+                App.logError(TAG, "highResImage url issue: null or empty!");
+                return;
+            }
+            Glide.with(this)
+                    .load(mHighResImageUrl)
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT) // todo: look into cache starts
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                            App.log(TAG, "in onResourceReady high res resolution");
+                            highResImageSet = true; // cancels potential setting of lower res image back on image view
+                            loadingSpinner.setVisibility(View.GONE);
+
+                        /*
+                        * Only set normal resolution image when highRes has not been loaded/cached yet.
+                        * */
+                            /** When image is loaded set it to the imageZoomView either upscale it, preserving aspect ratio, when there is whitespace
+                             *  or downscale it so that either width or length of image fits screen size */
+                            mArtWorkBitmap = bitmap;
+                            imageZoomView.setImage(ImageSource.bitmap(mArtWorkBitmap));
+                            imageZoomView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+
+                            scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
+                            // todo adjust for when scale should be set according to width instead of height
+
+                            // Zoom settings
+                            float maxScaleFactor = 8f;
+                            imageZoomView.setMinScale(scale);
+                            imageZoomView.setMaxScale(maxScaleFactor * scale);
+                            imageZoomView.setDoubleTapZoomScale(scale * 4);
+                            imageZoomView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
+
+                            // todo centering view not working as desired
+                            PointF pf = new PointF(0.5f, 0.5f);
+                            imageZoomView.setScaleAndCenter(scale, pf);
+                        }
+                    });
+        }
     }
 
     private void setOverflowMenu() {

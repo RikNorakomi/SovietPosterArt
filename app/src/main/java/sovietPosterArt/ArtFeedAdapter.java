@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
@@ -31,7 +33,6 @@ import sovietPosterArt.utils.JavaUtils;
 public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
 
     private final String TAG = getClass().getSimpleName();
-    private final boolean doTransitionAnimation = false;
 
     private boolean fullArtWorkCollectionShown = true;
     private boolean loadThumbUrl = true;
@@ -138,14 +139,12 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-//        @Bind(R.id.recycler_image_view)
+        @Bind(R.id.recycler_image_view)
         ImageView artWorkImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
-//            ButterKnife.bind(this, itemView);
-            artWorkImage = (ImageView) itemView.findViewById(R.id.recycler_image_view);
-
+            ButterKnife.bind(this, itemView);
             artWorkImage.setOnClickListener(view -> {
                 if (((MainActivity) mParentActivity).isFabMenuOpened()) {
                     App.log(TAG, "fabMenu opened. not selecting art item");
@@ -158,7 +157,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
                 intent.putExtra(Constants.ART_WORK_OBJECT, mPosters.get(getLayoutPosition()));
 //                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                if (Build.VERSION.SDK_INT >= 21 && doTransitionAnimation) {
+                if (Build.VERSION.SDK_INT >= 21) {
                     artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
                     ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mParentActivity,
                             Pair.create(view, Constants.ART_WORK_GALLERY),

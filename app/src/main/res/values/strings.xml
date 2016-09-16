@@ -5,4 +5,5 @@
     <string name="menu_hide_navbar">Hide Navigation Bar</string>
     <string name="menu_dummy_text">Just dummy text</string>
     <string name="menu_enable_loading_highres">Enable loading HighRes Images</string>
+    <string name="menu_disable_loading_highres">Disable loading HighRes Images</string>
 </resources>

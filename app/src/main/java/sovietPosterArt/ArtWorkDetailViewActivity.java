@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -322,6 +323,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         mOverflowMenu = new PopupMenu(this, mOverflowButton);
         mOverflowMenu.getMenu().clear();
         mOverflowMenu.inflate(R.menu.overflow_menu);
+        setMenuHighResItemTitle();
 
         mOverflowButton.setOnClickListener(v -> v.postDelayed(() -> {
             mOverflowMenu.show();
@@ -336,13 +338,17 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     return true;
                 case R.id.action_enable_highres_loading:
                     App.logError(TAG, "in button click action_enable_highres_loading");
-                    if (!shouldDownloadHRImages) {
-                        shouldDownloadHRImages = true;
-                        AppPreferences.sharedInstance().setDownloadHighResImages(true);
-                        App.toast("HighRes Images will be downloaded!");
+                    if (shouldDownloadHRImages){
+                        App.toast("Disabling downloading high resolution images");
                     } else {
-                        App.toast("Downloading HighRes Images already enabled");
+                        App.toast("Enabling downloading high resolution images");
                     }
+
+                    shouldDownloadHRImages = !shouldDownloadHRImages;
+                    AppPreferences.sharedInstance().setDownloadHighResImages(shouldDownloadHRImages);
+                    setMenuHighResItemTitle();
+
+
 
                     return true;
                 default:
@@ -350,6 +356,21 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             }
             return false;
         });
+    }
+
+    private void setMenuHighResItemTitle(){
+        if (mOverflowMenu==null){
+            String errorMessage = "mOverflowMenu==null";
+            App.logError(TAG, errorMessage);
+            return;
+        }
+        MenuItem HRItem = mOverflowMenu.getMenu().findItem(R.id.action_enable_highres_loading);
+        if (HRItem == null){
+            App.logError(TAG, "item is NULL!!!");
+        } else {
+            String title = shouldDownloadHRImages ? getString(R.string.menu_disable_loading_highres) : getString(R.string.menu_enable_loading_highres);
+            HRItem.setTitle(title);
+        }
     }
 
     @Override

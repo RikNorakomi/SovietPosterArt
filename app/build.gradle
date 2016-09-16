@@ -41,14 +41,13 @@ dependencies {
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2' // plugin to covert json results into a Data Access Object (DAO)
 
     compile 'com.github.bumptech.glide:glide:3.6.1'
-//    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
 
     compile 'com.firebase:firebase-client-android:2.5.2+'
 
 
     // floating action button (FAB) menu with multiple actions
     // see: https://github.com/futuresimple/android-floating-action-button/
-    // see: https://medium.com/@nullthemall/floatingactionmenu-floatingactionbutton-behavior-dd33cc0d9ba7#.kxxhf1fbs
     // alternative for this lib. could be: https://github.com/Clans/FloatingActionButton
     compile 'com.getbase:floatingactionbutton:1.10.1'
 

@@ -27,6 +27,7 @@ import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
+import sovietPosterArt.utils.AppPreferences;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -50,28 +51,34 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private boolean loadHighResImage = false;
 
 
-//    @Bind(R.id.container)
+    //    @Bind(R.id.container)
     FrameLayout mContainerView;
-//    @Bind(R.id.back_button)
+    //    @Bind(R.id.back_button)
     ImageButton mBackButton;
-//    @Bind(R.id.overflow_button)
+    //    @Bind(R.id.overflow_button)
     ImageButton mOverflowButton;
 
-//    @Bind(R.id.imageView)
+    //    @Bind(R.id.imageView)
     SubsamplingScaleImageView imageZoomView;
-//    @Bind(R.id.art_work_info_container)
+    //    @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
-//    @Bind(R.id.status_bar_scrim)
+    //    @Bind(R.id.status_bar_scrim)
     View mStatusBarScrimView;
-//    @Bind(R.id.progressBar)
+    //    @Bind(R.id.progressBar)
     ProgressBar loadingSpinner;
     private float scale = 1;
+    private boolean shouldDownloadHRImages;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_work_detail);
+
+        shouldDownloadHRImages = AppPreferences.sharedInstance().shouldDownloadHighResImages();
+        App.logError(TAG, "shouldDownloadHRImages = " + shouldDownloadHRImages);
+
+
         mContainerView = (FrameLayout) findViewById(R.id.container);
         mBackButton = (ImageButton) findViewById(R.id.back_button);
         mOverflowButton = (ImageButton) findViewById(R.id.overflow_button);
@@ -282,7 +289,15 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     new ShareArtworkTask(this, mArtWork);
                     return true;
                 case R.id.action_enable_highres_loading:
-                    App.toast("touched set high res enable");
+                    App.logError(TAG, "in button click action_enable_highres_loading");
+                    if (!shouldDownloadHRImages) {
+                        shouldDownloadHRImages = true;
+                        AppPreferences.sharedInstance().setDownloadHighResImages(true);
+                        App.toast("HighRes Images will be downloaded!");
+                    } else {
+                        App.toast("Downloading HighRes Images already enabled");
+                    }
+
                     return true;
                 default:
                     App.logError(TAG, "Couldn't retreive id for overflow menu clicked. Id= " + menuItem.getItemId());

@@ -79,7 +79,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         shouldDownloadHRImages = AppPreferences.sharedInstance().shouldDownloadHighResImages();
         App.logError(TAG, "shouldDownloadHRImages = " + shouldDownloadHRImages);
 
-
         mContainerView = (FrameLayout) findViewById(R.id.container);
         mBackButton = (ImageButton) findViewById(R.id.back_button);
         mOverflowButton = (ImageButton) findViewById(R.id.overflow_button);
@@ -338,7 +337,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     return true;
                 case R.id.action_enable_highres_loading:
                     App.logError(TAG, "in button click action_enable_highres_loading");
-                    if (shouldDownloadHRImages){
+                    if (shouldDownloadHRImages) {
                         App.toast("Disabling downloading high resolution images");
                     } else {
                         App.toast("Enabling downloading high resolution images");
@@ -349,7 +348,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     setMenuHighResItemTitle();
 
 
-
                     return true;
                 default:
                     App.logError(TAG, "Couldn't retreive id for overflow menu clicked. Id= " + menuItem.getItemId());
@@ -358,14 +356,14 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         });
     }
 
-    private void setMenuHighResItemTitle(){
-        if (mOverflowMenu==null){
+    private void setMenuHighResItemTitle() {
+        if (mOverflowMenu == null) {
             String errorMessage = "mOverflowMenu==null";
             App.logError(TAG, errorMessage);
             return;
         }
         MenuItem HRItem = mOverflowMenu.getMenu().findItem(R.id.action_enable_highres_loading);
-        if (HRItem == null){
+        if (HRItem == null) {
             App.logError(TAG, "item is NULL!!!");
         } else {
             String title = shouldDownloadHRImages ? getString(R.string.menu_disable_loading_highres) : getString(R.string.menu_enable_loading_highres);

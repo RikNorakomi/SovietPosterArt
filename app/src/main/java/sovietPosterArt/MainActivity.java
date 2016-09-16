@@ -339,7 +339,6 @@ public class MainActivity extends GenericActivity implements
     @Override
     protected void onStop() {
         App.log(TAG, "in onStop");
-        ButterKnife.unbind(this);
         super.onStop();
     }
 

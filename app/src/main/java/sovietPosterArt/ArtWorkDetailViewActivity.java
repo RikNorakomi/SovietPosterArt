@@ -294,7 +294,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
     @Override
     protected void onDestroy() {
-        ButterKnife.unbind(this);
         super.onDestroy();
     }
 

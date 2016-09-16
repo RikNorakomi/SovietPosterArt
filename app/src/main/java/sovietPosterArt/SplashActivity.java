@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
 
         handler.postDelayed(() -> {
             startActivity(intent);
-            handler.postDelayed(this::finish, 500);
+//            handler.postDelayed(this::finish, 500);
 
             // todo: come up with nice transition to main activity screen probably slide use slide in from bottom
             // todo: animation on recycler view

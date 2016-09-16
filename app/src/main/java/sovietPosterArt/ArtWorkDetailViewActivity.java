@@ -23,8 +23,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
@@ -52,20 +50,20 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private boolean loadHighResImage = false;
 
 
-    @Bind(R.id.container)
+//    @Bind(R.id.container)
     FrameLayout mContainerView;
-    @Bind(R.id.back_button)
+//    @Bind(R.id.back_button)
     ImageButton mBackButton;
-    @Bind(R.id.overflow_button)
+//    @Bind(R.id.overflow_button)
     ImageButton mOverflowButton;
 
-    @Bind(R.id.imageView)
+//    @Bind(R.id.imageView)
     SubsamplingScaleImageView imageZoomView;
-    @Bind(R.id.art_work_info_container)
+//    @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
-    @Bind(R.id.status_bar_scrim)
+//    @Bind(R.id.status_bar_scrim)
     View mStatusBarScrimView;
-    @Bind(R.id.progressBar)
+//    @Bind(R.id.progressBar)
     ProgressBar loadingSpinner;
     private float scale = 1;
 
@@ -74,7 +72,15 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_work_detail);
-        ButterKnife.bind(this);
+        mContainerView = (FrameLayout) findViewById(R.id.container);
+        mBackButton = (ImageButton) findViewById(R.id.back_button);
+        mOverflowButton = (ImageButton) findViewById(R.id.overflow_button);
+        imageZoomView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
+        mArtWorkInfoContainer = (LinearLayout) findViewById(R.id.art_work_info_container);
+        mStatusBarScrimView = findViewById(R.id.status_bar_scrim);
+        loadingSpinner = (ProgressBar) findViewById(R.id.progressBar);
+
+//        ButterKnife.bind(this);
 
         mBackButton.setOnClickListener(v -> v.postDelayed(this::onBackPressed, 200)); // adds a 200ms sec delay to show ripple effect on clicking back button
         setOverflowMenu();
@@ -294,7 +300,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
     @Override
     protected void onDestroy() {
-        ButterKnife.unbind(this);
+//        ButterKnife.unbind(this);
         super.onDestroy();
     }
 

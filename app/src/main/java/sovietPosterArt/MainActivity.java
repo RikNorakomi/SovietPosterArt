@@ -21,8 +21,6 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
@@ -48,14 +46,23 @@ public class MainActivity extends GenericActivity implements
      * See also: https://dazzling-inferno-8912.firebaseio.com/posters
      */
 
-    @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
-    @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
-    @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
-    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
-    @Bind(R.id.fab_menu_action_show_all) FloatingActionButton mFabActionShowAll;
-    @Bind(R.id.fab_menu_action_show_random_poster) FloatingActionButton mFabActionShowRandomPoster;
-    @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
-    @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
+//    @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
+//    @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
+//    @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
+//    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
+//    @Bind(R.id.fab_menu_action_show_all) FloatingActionButton mFabActionShowAll;
+//    @Bind(R.id.fab_menu_action_show_random_poster) FloatingActionButton mFabActionShowRandomPoster;
+//    @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
+//    @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
+
+    RecyclerView mRecyclerView;
+    FloatingActionsMenu mFabMenu;
+    FloatingActionButton mFabActionSearch;
+    FloatingActionButton mFabActionFilter;
+    FloatingActionButton mFabActionShowAll;
+    FloatingActionButton mFabActionShowRandomPoster;
+    MaterialSearchView mMaterialSearchView;
+    LinearLayout mStatusBarUnderlay;
 
     private ArtFeedAdapter mArtFeedAdapter;
     private DataManager mDataManager;
@@ -68,7 +75,16 @@ public class MainActivity extends GenericActivity implements
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+//        ButterKnife.bind(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.overview_recycler);
+        mFabMenu= (FloatingActionsMenu) findViewById(R.id.fab_menu_with_multiple_actions);
+        mFabActionSearch = (FloatingActionButton) findViewById(R.id.fab_menu_action_search);
+         mFabActionFilter= (FloatingActionButton) findViewById(R.id.fab_menu_action_filter);;
+         mFabActionShowAll= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_all);;
+         mFabActionShowRandomPoster= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_random_poster);;
+         mMaterialSearchView= (MaterialSearchView) findViewById(R.id.search_view);;
+         mStatusBarUnderlay= (LinearLayout) findViewById(R.id.status_bar_underlay);;
+
 
         // todo: remove fab on scrolling: http://www.materialdoc.com/scrolling-techniques/
         mFabMenu.setOnFloatingActionsMenuUpdateListener(this);
@@ -257,6 +273,11 @@ public class MainActivity extends GenericActivity implements
                 App.log(TAG, "fab_menu_action_filter");
                 break;
             case R.id.fab_menu_action_search:
+                if (mFabMenu==null){
+                    String errorMessage = "mFabMenu == null";
+                    App.logError(TAG, errorMessage);
+                    return;
+                }
                 // it was the second button
                 mFabMenu.collapse();
                 mFabMenu.postDelayed(() -> {
@@ -266,6 +287,12 @@ public class MainActivity extends GenericActivity implements
                 App.log(TAG, "fab_menu_action_search");
                 break;
             case R.id.fab_menu_action_show_all:
+                if (mFabMenu==null){
+                    String errorMessage = "mFabMenu == null";
+                    App.logError(TAG, errorMessage);
+                    return;
+                }
+
                 // re-populate recycler view with full art collection (after search query...)
 
                 mFabMenu.postDelayed(() -> {
@@ -278,6 +305,11 @@ public class MainActivity extends GenericActivity implements
                 App.log(TAG, "resetting back to show full art collection");
                 break;
             case R.id.fab_menu_action_show_random_poster:
+                if (mFabMenu==null){
+                    String errorMessage = "mFabMenu == null";
+                    App.logError(TAG, errorMessage);
+                    return;
+                }
                 mFabMenu.postDelayed(() -> {
                     mFabMenu.collapse();
                     Poster poster = mArtFeedAdapter.getRandomPoster();
@@ -294,10 +326,10 @@ public class MainActivity extends GenericActivity implements
 
     @Override
     public void onBackPressed() {
-        if (mMaterialSearchView.isSearchOpen()) {
+        if (mMaterialSearchView != null && mMaterialSearchView.isSearchOpen()) {
             App.log(TAG, "onBackPressed: search is open");
             mMaterialSearchView.closeSearch();
-        } else if (mFabMenu.isExpanded()) {
+        } else if (mFabMenu != null && mFabMenu.isExpanded()) {
             mFabMenu.collapse();
         } else {
             App.log(TAG, "onBackPressed: search is NOT open");
@@ -339,7 +371,7 @@ public class MainActivity extends GenericActivity implements
     @Override
     protected void onStop() {
         App.log(TAG, "in onStop");
-        ButterKnife.unbind(this);
+//        ButterKnife.unbind(this);
         super.onStop();
     }
 

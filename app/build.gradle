@@ -60,8 +60,9 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.jakewharton:butterknife:7.0.1'
 
+//    compile 'com.google.firebase:firebase-core:9.2.0'
     compile 'com.firebase:firebase-client-android:2.5.2+'
-    compile 'com.google.firebase:firebase-core:9.4.0'
+
 
     // floating action button (FAB) menu with multiple actions
     // see: https://github.com/futuresimple/android-floating-action-button/
@@ -80,7 +81,7 @@ dependencies {
 }
 
 // ADD THIS AT THE BOTTOM± https://firebase.google.com/docs/android/setup
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 
 /**
  * Firebase documentation: https://firebase.google.com/docs/android/setup

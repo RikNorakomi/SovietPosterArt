@@ -23,7 +23,7 @@
     <!--<color name="fab_menu_color_default">@color/colorAccent</color>-->
     <!--<color name="fab_menu_color_pressed">@color/colorAccentDarker</color>-->
 
-    <color name="fab_menu_color_default">@color/navigation_bar_transparent</color>
+    <color name="fab_menu_color_default">@color/colorAccentDarker</color>
     <color name="fab_menu_color_pressed">@color/navigation_bar_transparent_darker</color>
     <color name="fab_menu_plus_icon_color">@color/white</color>
     <color name="fab_menu_opened_label_color_black_semi_transparent">@color/deepDarkRed88</color>

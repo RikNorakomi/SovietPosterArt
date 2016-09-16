@@ -58,7 +58,7 @@ public class MainActivity extends GenericActivity implements
     RecyclerView mRecyclerView;
     FloatingActionsMenu mFabMenu;
     FloatingActionButton mFabActionSearch;
-    FloatingActionButton mFabActionFilter;
+//    FloatingActionButton mFabActionFilter;
     FloatingActionButton mFabActionShowAll;
     FloatingActionButton mFabActionShowRandomPoster;
     MaterialSearchView mMaterialSearchView;
@@ -79,7 +79,7 @@ public class MainActivity extends GenericActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.overview_recycler);
         mFabMenu= (FloatingActionsMenu) findViewById(R.id.fab_menu_with_multiple_actions);
         mFabActionSearch = (FloatingActionButton) findViewById(R.id.fab_menu_action_search);
-         mFabActionFilter= (FloatingActionButton) findViewById(R.id.fab_menu_action_filter);;
+//         mFabActionFilter= (FloatingActionButton) findViewById(R.id.fab_menu_action_filter);;
          mFabActionShowAll= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_all);;
          mFabActionShowRandomPoster= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_random_poster);;
          mMaterialSearchView= (MaterialSearchView) findViewById(R.id.search_view);;
@@ -89,7 +89,7 @@ public class MainActivity extends GenericActivity implements
         // todo: remove fab on scrolling: http://www.materialdoc.com/scrolling-techniques/
         mFabMenu.setOnFloatingActionsMenuUpdateListener(this);
         mFabActionSearch.setOnClickListener(this);
-        mFabActionFilter.setOnClickListener(this);
+//        mFabActionFilter.setOnClickListener(this);
         mFabActionShowAll.setOnClickListener(this);
         mFabActionShowRandomPoster.setOnClickListener(this);
         initSearchView();
@@ -268,10 +268,10 @@ public class MainActivity extends GenericActivity implements
     public void onClick(View v) {
         App.log(TAG, "in onClick v=" + v.getId());
         switch (v.getId()) {
-            case R.id.fab_menu_action_filter:
-                // it was the second button
-                App.log(TAG, "fab_menu_action_filter");
-                break;
+//            case R.id.fab_menu_action_filter:
+//                // it was the second button
+//                App.log(TAG, "fab_menu_action_filter");
+//                break;
             case R.id.fab_menu_action_search:
                 if (mFabMenu==null){
                     String errorMessage = "mFabMenu == null";

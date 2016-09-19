@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -39,7 +40,7 @@ import sovietPosterArt.utils.TypefaceUtil;
  * This class makes use of Dave Morrissey's subsampling scale image view.
  * More info on this custom view's usage can be found at: https://github.com/davemorrissey/subsampling-scale-image-view
  */
-public class ArtWorkDetailViewActivity extends GenericActivity {
+public class ArtWorkDetailViewActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -50,26 +51,17 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private String mHighResImageUrl;
     private Poster mArtWork;
 
-
-    //    @Bind(R.id.container)
     FrameLayout mContainerView;
-    //    @Bind(R.id.back_button)
     ImageButton mBackButton;
-    //    @Bind(R.id.overflow_button)
     ImageButton mOverflowButton;
-
-    //    @Bind(R.id.imageView)
     SubsamplingScaleImageView imageZoomView;
-    //    @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
-    //    @Bind(R.id.status_bar_scrim)
     View mStatusBarScrimView;
-    //    @Bind(R.id.progressBar)
-    ProgressBar loadingSpinner;
+    ProgressBar mLoadingSpinner;
+
     private float scale = 1;
     private boolean shouldDownloadHRImages;
     private boolean highResImageSet = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +77,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         imageZoomView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
         mArtWorkInfoContainer = (LinearLayout) findViewById(R.id.art_work_info_container);
         mStatusBarScrimView = findViewById(R.id.status_bar_scrim);
-        loadingSpinner = (ProgressBar) findViewById(R.id.progressBar);
-
-//        ButterKnife.bind(this);
+        mLoadingSpinner = (ProgressBar) findViewById(R.id.progressBar);
 
         mBackButton.setOnClickListener(v -> v.postDelayed(this::onBackPressed, 200)); // adds a 200ms sec delay to show ripple effect on clicking back button
         setOverflowMenu();
@@ -104,7 +94,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             App.log(TAG, "setting mShowUI to: " + mShowUI);
         });
 
-        loadingSpinner.setVisibility(View.VISIBLE);
+        mLoadingSpinner.setVisibility(View.VISIBLE);
         loadImageIntoView(mImageUrl);
 
         /** Touch event handling:
@@ -149,14 +139,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
 
         mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.TOP));
-
-
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//            mStatusBarScrimView.setVisibility(View.GONE);
-//        } else {
-//            mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
-//                    0x44000000, 8, Gravity.TOP));
-//        }
 
         final float metadataSlideDistance = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
@@ -211,23 +193,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                 .setDuration(animationDuration);
 
                     }
-
-
-//                        if (mStatusBarScrimView != null) {
-//                            mStatusBarScrimView.setVisibility(
-//                                    showArtDetailChrome ? View.VISIBLE : View.GONE);
-//                            mStatusBarScrimView.animate()
-//                                    .alpha(visible ? 1f : 0f)
-//                                    .setDuration(200)
-//                                    .withEndAction(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            if (!visible) {
-//                                                mStatusBarScrimView.setVisibility(View.GONE);
-//                                            }
-//                                        }
-//                                    });
-//                        }
                 });
     }
 
@@ -245,7 +210,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                         App.log(TAG, "in onResourceReady normal resolution");
-                        loadingSpinner.setVisibility(View.GONE);
+                        mLoadingSpinner.setVisibility(View.GONE);
                         if (highResImageSet) {
                             App.logError(TAG, "!!!highResImage already set on imageView. Nop need to set lowRes");
                             return;
@@ -289,7 +254,7 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                         public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                             App.log(TAG, "in onResourceReady high res resolution");
                             highResImageSet = true; // cancels potential setting of lower res image back on image view
-                            loadingSpinner.setVisibility(View.GONE);
+                            mLoadingSpinner.setVisibility(View.GONE);
 
                         /*
                         * Only set normal resolution image when highRes has not been loaded/cached yet.
@@ -376,12 +341,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         super.onResume();
         App.log(TAG, "in onResume");
         hideUiBars();
-    }
-
-    @Override
-    protected void onDestroy() {
-//        ButterKnife.unbind(this);
-        super.onDestroy();
     }
 
     @Override

@@ -40,15 +40,11 @@ public class App {
 
     public static void toast(String string) {
         Toast toast = Toast.makeText(AppContext.getContext(), string, Toast.LENGTH_SHORT);
-//        TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-//        if (v != null) v.setGravity(Gravity.CENTER);
         toast.show();
     }
 
     public static void toastLong(String string) {
         Toast toast = Toast.makeText(AppContext.getContext(), string, Toast.LENGTH_LONG);
-//        TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-//        if (v != null) v.setGravity(Gravity.CENTER);
         toast.show();
     }
 

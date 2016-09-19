@@ -17,3 +17,4 @@ local.properties
 .idea/.name
 app/app-release.apk
 backup_idea/
+app/fabric.properties

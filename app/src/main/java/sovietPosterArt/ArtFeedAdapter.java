@@ -31,11 +31,11 @@ import sovietPosterArt.utils.JavaUtils;
 public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHolder> {
 
     private final String TAG = getClass().getSimpleName();
-    private final boolean doTransitionAnimation = false;
+    private final boolean mDoTransitionAnimation = false;
 
-    private boolean fullArtWorkCollectionShown = true;
-    private boolean loadThumbUrl = true;
-    private boolean shouldRandomizeArtFeedImages = false;
+    private boolean mFullArtWorkCollectionShown = true;
+    private boolean mLoadThumbUrl = true;
+    private boolean mShouldRandomizeArtFeedImages = false; // temp flag to prevent transition due to ui issue with butterknife library
 
     private Activity mParentActivity = null;
     private ArrayList<Poster> mPosters = new ArrayList<>();
@@ -48,31 +48,31 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     public void setArtWorkCollection(ArrayList<Poster> artWorkCollection) {
         // determine whether to randomizing collection to not always have same
         // art work at start of overview when app starts
-        if (shouldRandomizeArtFeedImages)
+        if (mShouldRandomizeArtFeedImages)
             JavaUtils.randomizeArrayList(artWorkCollection);
 
-        this.mFullArtWorkCollection.addAll(artWorkCollection);
+        mFullArtWorkCollection.addAll(artWorkCollection);
         mPosters.clear();
         mPosters.addAll(artWorkCollection);
-        fullArtWorkCollectionShown = true;
+        mFullArtWorkCollectionShown = true;
         notifyDataSetChanged();
     }
 
     public void setLoadThumbUrl(boolean shouldLoadThumbs) {
-        this.loadThumbUrl = shouldLoadThumbs;
+        this.mLoadThumbUrl = shouldLoadThumbs;
     }
 
     public void setQueryResult(List<Poster> artWorkCollection) {
         mPosters.clear();
         mPosters.addAll(artWorkCollection);
-        fullArtWorkCollectionShown = false;
+        mFullArtWorkCollectionShown = false;
         notifyDataSetChanged();
     }
 
     public void resetBackToFullCollection() {
         mPosters.clear();
         mPosters.addAll(mFullArtWorkCollection);
-        fullArtWorkCollectionShown = true;
+        mFullArtWorkCollectionShown = true;
         notifyDataSetChanged();
     }
 
@@ -82,7 +82,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     public boolean isFullArtWorkCollectionShown() {
-        return fullArtWorkCollectionShown;
+        return mFullArtWorkCollectionShown;
     }
 
     @Override
@@ -98,8 +98,8 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
         if (mPosters.isEmpty())
             return;
 
-        // load thumbImage (190px) or normal image (600px) depending on loadThumbUrl flag
-        String imageUrl = loadThumbUrl ? mPosters.get(position).getThumbnailUrl() : mPosters.get(position).getImageUrl();
+        // load thumbImage (190px) or normal image (600px) depending on mLoadThumbUrl flag
+        String imageUrl = mLoadThumbUrl ? mPosters.get(position).getThumbnailUrl() : mPosters.get(position).getImageUrl();
         App.log(TAG, "imageUrl to load: " + imageUrl);
 
         Glide.with(mParentActivity)
@@ -138,12 +138,10 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-//        @Bind(R.id.recycler_image_view)
         ImageView artWorkImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
-//            ButterKnife.bind(this, itemView);
             artWorkImage = (ImageView) itemView.findViewById(R.id.recycler_image_view);
 
             artWorkImage.setOnClickListener(view -> {
@@ -158,7 +156,7 @@ public class ArtFeedAdapter extends RecyclerView.Adapter<ArtFeedAdapter.ViewHold
                 intent.putExtra(Constants.ART_WORK_OBJECT, mPosters.get(getLayoutPosition()));
 //                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                if (Build.VERSION.SDK_INT >= 21 && doTransitionAnimation) {
+                if (Build.VERSION.SDK_INT >= 21 && mDoTransitionAnimation) {
                     artWorkImage.setTransitionName(Constants.ART_WORK_GALLERY);
                     ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mParentActivity,
                             Pair.create(view, Constants.ART_WORK_GALLERY),

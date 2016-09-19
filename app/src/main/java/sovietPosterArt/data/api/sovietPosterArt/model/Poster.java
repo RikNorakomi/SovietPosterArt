@@ -10,7 +10,7 @@ import sovietPosterArt.utils.App;
 public class Poster implements Serializable {
 
     private final String TAG = getClass().getSimpleName();
-    private static final String URL_BASE_PATH = "http://sovietart.me";
+    private static final String URL_BASE_PATH = "http://sovietart.me"; // todo: move; should not be here!
 
     private String title;
     private String author;
@@ -87,14 +87,6 @@ public class Poster implements Serializable {
         this.filename = filename;
     }
 
-//    public String getCategory() {
-//        return category;
-//    }
-//
-//    public void setCategory(String category) {
-//        this.category = category;
-//    }
-
     public String getYear() {
         return year;
     }
@@ -110,17 +102,4 @@ public class Poster implements Serializable {
     public String getFilepathHighResImg() {
         return highResImageFilepath;
     }
-
-
-//    @Override
-//    public String toString() {
-//        return "Poster{" +
-//                "title='" + title + '\'' +
-//                ", author='" + author + '\'' +
-//                ", filepath='" + imageFilepath + '\n' +
-//                ", filename='" + filename + '\n' +
-//                ", category='" + category + '\n' +
-//                ", year='" + year + '\n' +
-//                '}' + '\n';
-//    }
 }

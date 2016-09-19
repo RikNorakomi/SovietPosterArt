@@ -3,6 +3,7 @@ package sovietPosterArt;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -26,7 +27,6 @@ import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
-import sovietPosterArt.data.DataManager;
 import sovietPosterArt.data.SearchAdapter;
 import sovietPosterArt.data.api.sovietPosterArt.SovietArtMeService;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
@@ -37,35 +37,26 @@ import sovietPosterArt.utils.App;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 
-public class MainActivity extends GenericActivity implements
+public class MainActivity extends AppCompatActivity implements
         View.OnClickListener,
         FloatingActionsMenu.OnFloatingActionsMenuUpdateListener {
+
+    private final String TAG = getClass().getSimpleName();
 
     /**
      * MainActivity takes care of displaying the art work overview
      * See also: https://dazzling-inferno-8912.firebaseio.com/posters
      */
 
-//    @Bind(R.id.overview_recycler) RecyclerView mRecyclerView;
-//    @Bind(R.id.fab_menu_with_multiple_actions) FloatingActionsMenu mFabMenu;
-//    @Bind(R.id.fab_menu_action_search) FloatingActionButton mFabActionSearch;
-//    @Bind(R.id.fab_menu_action_filter) FloatingActionButton mFabActionFilter;
-//    @Bind(R.id.fab_menu_action_show_all) FloatingActionButton mFabActionShowAll;
-//    @Bind(R.id.fab_menu_action_show_random_poster) FloatingActionButton mFabActionShowRandomPoster;
-//    @Bind(R.id.search_view) MaterialSearchView mMaterialSearchView;
-//    @Bind(R.id.status_bar_underlay) LinearLayout mStatusBarUnderlay;
-
     RecyclerView mRecyclerView;
     FloatingActionsMenu mFabMenu;
     FloatingActionButton mFabActionSearch;
-//    FloatingActionButton mFabActionFilter;
     FloatingActionButton mFabActionShowAll;
     FloatingActionButton mFabActionShowRandomPoster;
     MaterialSearchView mMaterialSearchView;
     LinearLayout mStatusBarUnderlay;
 
     private ArtFeedAdapter mArtFeedAdapter;
-    private DataManager mDataManager;
     private boolean fabMenuOpened = false;
     private long backButtonClickTime = 0;
 
@@ -75,11 +66,10 @@ public class MainActivity extends GenericActivity implements
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_main);
-//        ButterKnife.bind(this);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.overview_recycler);
         mFabMenu= (FloatingActionsMenu) findViewById(R.id.fab_menu_with_multiple_actions);
         mFabActionSearch = (FloatingActionButton) findViewById(R.id.fab_menu_action_search);
-//         mFabActionFilter= (FloatingActionButton) findViewById(R.id.fab_menu_action_filter);;
          mFabActionShowAll= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_all);;
          mFabActionShowRandomPoster= (FloatingActionButton) findViewById(R.id.fab_menu_action_show_random_poster);;
          mMaterialSearchView= (MaterialSearchView) findViewById(R.id.search_view);;
@@ -89,7 +79,6 @@ public class MainActivity extends GenericActivity implements
         // todo: remove fab on scrolling: http://www.materialdoc.com/scrolling-techniques/
         mFabMenu.setOnFloatingActionsMenuUpdateListener(this);
         mFabActionSearch.setOnClickListener(this);
-//        mFabActionFilter.setOnClickListener(this);
         mFabActionShowAll.setOnClickListener(this);
         mFabActionShowRandomPoster.setOnClickListener(this);
         initSearchView();
@@ -169,11 +158,10 @@ public class MainActivity extends GenericActivity implements
         App.log(TAG, "in handleSearchQUery: " + query);
         List<Poster> posters = SearchAdapter.getInstance().doSearchQuery(query);
 
-
         if (posters.size() == 1) {
             // Go to detail view to display the poster
             //todo: we're mimicing waiting for keyboard to be removed here, otherwise
-            // todo: navigation bar won't be removed in detail screen. But really we should use a listener
+            // todo: navigation bar won't be removed in detail screen. But really we should use some sort of listener
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -251,7 +239,6 @@ public class MainActivity extends GenericActivity implements
             call.enqueue(new Callback<SovietArtMePosters>() {
                 @Override
                 public void onResponse(Response<SovietArtMePosters> response, Retrofit retrofit) {
-//                    App.log(TAG, response.toString());
                     posters.addAll(response.body().posters);
                     mArtFeedAdapter.setArtWorkCollection(posters);
                 }
@@ -360,19 +347,6 @@ public class MainActivity extends GenericActivity implements
     public void onMenuCollapsed() {
         App.log(TAG, "in onMenuCollapsed");
         fabMenuOpened = false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        App.log(TAG, "in OnDestroy");
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onStop() {
-        App.log(TAG, "in onStop");
-//        ButterKnife.unbind(this);
-        super.onStop();
     }
 
     public boolean isFabMenuOpened() {

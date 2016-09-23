@@ -17,7 +17,7 @@ repositories {
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
 
     compileOptions {
@@ -26,11 +26,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "sovietPosterArt.sovietPosterArt"
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId "norakomi.sovietPosterArt"
+        minSdkVersion 21
+        targetSdkVersion 24
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -41,7 +41,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.1.1'
+    supportLibVersion = '24.2.0'
 }
 
 dependencies {
@@ -50,22 +50,19 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:palette-v7:${supportLibVersion}"
     compile "com.android.support:support-annotations:${supportLibVersion}"
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
-    // used for artwork detail screen
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1' // used for artwork detail screen
 
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
-    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    // plugin to covert json results into a Data Access Object (DAO)
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2' // plugin to covert json results into a Data Access Object (DAO)
 
     compile 'com.github.bumptech.glide:glide:3.6.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
 
-//    compile 'com.google.firebase:firebase-core:9.2.0'
     compile 'com.firebase:firebase-client-android:2.5.2+'
 
 
     // floating action button (FAB) menu with multiple actions
     // see: https://github.com/futuresimple/android-floating-action-button/
+    // see: https://medium.com/@nullthemall/floatingactionmenu-floatingactionbutton-behavior-dd33cc0d9ba7#.kxxhf1fbs
     // alternative for this lib. could be: https://github.com/Clans/FloatingActionButton
     compile 'com.getbase:floatingactionbutton:1.10.1'
 
@@ -73,19 +70,11 @@ dependencies {
     // see also materialdoc.com
     // for more libraries see: https://android-arsenal.com/tag/208?sort=rating
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
-
-    // fabric crashLytics: https://www.fabric.io/norakomi
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }
+
 }
-
-// ADD THIS AT THE BOTTOM± https://firebase.google.com/docs/android/setup
-//apply plugin: 'com.google.gms.google-services'
-
-/**
- * Firebase documentation: https://firebase.google.com/docs/android/setup
- */
 
 /**
  * Info on Retrofit:

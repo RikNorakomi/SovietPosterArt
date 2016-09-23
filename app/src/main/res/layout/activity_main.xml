@@ -3,11 +3,9 @@
     android:id="@+id/main_activity_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/deepDarkerRed"
-    tools:context="sovietPosterArt.MainActivity">
+    android:background="@color/deepDarkerRed">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/overview_recycler"
@@ -29,37 +27,38 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="64dp"
         android:layout_marginRight="16dp"
-        android:clickable="true"
+
         fab:fab_addButtonColorNormal="@color/fab_menu_color_default"
         fab:fab_addButtonColorPressed="@color/fab_menu_color_pressed"
         fab:fab_addButtonPlusIconColor="@color/fab_menu_plus_icon_color"
 
         fab:fab_labelStyle="@style/menu_labels_style">
+        <!--android:clickable="true"-->
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_menu_action_show_random_poster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_colorPressed="@color/fab_menu_color_pressed"
             fab:fab_icon="@drawable/ic_help_outline_white_24dp"
             fab:fab_title="Show a random poster"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_menu_action_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorAccentDarker"
-            fab:fab_icon="@drawable/ic_filter_list_white_24dp"
-            fab:fab_title="Filter category"/>
+        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+            <!--android:id="@+id/fab_menu_action_filter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--fab:fab_colorNormal="@color/colorPrimaryDark"-->
+            <!--fab:fab_colorPressed="@color/colorAccentDarker"-->
+            <!--fab:fab_icon="@drawable/ic_filter_list_white_24dp"-->
+            <!--fab:fab_title="Filter category"/>-->
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_menu_action_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_colorPressed="@color/fab_menu_color_pressed"
             fab:fab_icon="@drawable/ic_search_white_24dp"
             fab:fab_title="Search Artwork"/>
 
@@ -68,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorPrimaryDark"
-            fab:fab_colorPressed="@color/colorAccentDarker"
+            fab:fab_colorPressed="@color/fab_menu_color_pressed"
             fab:fab_icon="@drawable/ic_settings_backup_restore_white_24dp"
             fab:fab_title="Show all posters"/>
 
@@ -76,14 +75,14 @@
 
     <!-- Gets shown when search view becomes visible -->
     <LinearLayout
-        android:orientation="vertical"
         android:id="@+id/status_bar_underlay"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:visibility="gone"
         android:layout_alignParentTop="true"
+        android:background="@color/white_underlay_statusbar"
         android:fitsSystemWindows="false"
-        android:background="@color/white_underlay_statusbar">
+        android:orientation="vertical"
+        android:visibility="gone">
     </LinearLayout>
 
     <!-- https://github.com/MiguelCatalan/MaterialSearchView -->
@@ -95,8 +94,6 @@
         android:alpha="0.92"
         android:fitsSystemWindows="true"
         android:minHeight="80dp"/>
-
-
 
 
 </RelativeLayout>

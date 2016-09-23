@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,13 +25,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import sovietPosterArt.data.api.sovietPosterArt.model.Poster;
 import sovietPosterArt.sharing_artwork.ShareArtworkTask;
 import sovietPosterArt.sovietPosterArt.R;
 import sovietPosterArt.utils.App;
-import sovietPosterArt.utils.AppContext;
+import sovietPosterArt.utils.AppPreferences;
 import sovietPosterArt.utils.Constants;
 import sovietPosterArt.utils.ScreenUtils;
 import sovietPosterArt.utils.ScrimUtil;
@@ -40,7 +40,7 @@ import sovietPosterArt.utils.TypefaceUtil;
  * This class makes use of Dave Morrissey's subsampling scale image view.
  * More info on this custom view's usage can be found at: https://github.com/davemorrissey/subsampling-scale-image-view
  */
-public class ArtWorkDetailViewActivity extends GenericActivity {
+public class ArtWorkDetailViewActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -50,39 +50,41 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
     private String mImageUrl;
     private String mHighResImageUrl;
     private Poster mArtWork;
-    private boolean highResImageLoaded = false;
 
-
-    @Bind(R.id.container)
     FrameLayout mContainerView;
-    @Bind(R.id.back_button)
     ImageButton mBackButton;
-    @Bind(R.id.overflow_button)
     ImageButton mOverflowButton;
-
-    @Bind(R.id.imageView)
     SubsamplingScaleImageView imageZoomView;
-    @Bind(R.id.art_work_info_container)
     LinearLayout mArtWorkInfoContainer;
-    @Bind(R.id.status_bar_scrim)
     View mStatusBarScrimView;
-    @Bind(R.id.progressBar)
-    ProgressBar loadingSpinner;
-    private float scale = 1;
+    ProgressBar mLoadingSpinner;
 
+    private float scale = 1;
+    private boolean shouldDownloadHRImages;
+    private boolean highResImageSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.art_work_detail);
-        ButterKnife.bind(this);
+
+        shouldDownloadHRImages = AppPreferences.sharedInstance().shouldDownloadHighResImages();
+        App.logError(TAG, "shouldDownloadHRImages = " + shouldDownloadHRImages);
+
+        mContainerView = (FrameLayout) findViewById(R.id.container);
+        mBackButton = (ImageButton) findViewById(R.id.back_button);
+        mOverflowButton = (ImageButton) findViewById(R.id.overflow_button);
+        imageZoomView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
+        mArtWorkInfoContainer = (LinearLayout) findViewById(R.id.art_work_info_container);
+        mStatusBarScrimView = findViewById(R.id.status_bar_scrim);
+        mLoadingSpinner = (ProgressBar) findViewById(R.id.progressBar);
 
         mBackButton.setOnClickListener(v -> v.postDelayed(this::onBackPressed, 200)); // adds a 200ms sec delay to show ripple effect on clicking back button
         setOverflowMenu();
 
         mShowUI = true;
         mArtWork = (Poster) getIntent().getSerializableExtra(Constants.ART_WORK_OBJECT);
-        mImageUrl = mArtWork.getHighResImageUrl();
+        mImageUrl = mArtWork.getImageUrl();
         mHighResImageUrl = mArtWork.getHighResImageUrl();
 
 
@@ -92,9 +94,8 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
             App.log(TAG, "setting mShowUI to: " + mShowUI);
         });
 
-        loadingSpinner.setVisibility(View.VISIBLE);
-        boolean highResImageShouldBeLoaded = ScreenUtils.isTablet(AppContext.getContext());
-        loadImageIntoView(highResImageShouldBeLoaded ? mHighResImageUrl : mImageUrl);
+        mLoadingSpinner.setVisibility(View.VISIBLE);
+        loadImageIntoView(mImageUrl);
 
         /** Touch event handling:
          *  A GestureDetector(GD) is created to handle more advanced touch event detection
@@ -139,14 +140,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
                 0x99000000, 8, Gravity.TOP));
 
-
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-//            mStatusBarScrimView.setVisibility(View.GONE);
-//        } else {
-//            mStatusBarScrimView.setBackground(ScrimUtil.makeCubicGradientScrimDrawable(
-//                    0x44000000, 8, Gravity.TOP));
-//        }
-
         final float metadataSlideDistance = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
@@ -169,7 +162,10 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                 .alpha(1f)
                                 .translationY(mShowUI ? 1 : metadataSlideDistance)
                                 .setDuration(animationDuration)
-                                .withEndAction(() -> App.log(TAG, "no EndACtion in animation"));
+                                .withEndAction(() -> {
+                                    App.log(TAG, "finish() EndACtion in animation");
+
+                                });
                         mStatusBarScrimView.animate()
                                 .alpha(1f)
                                 .setDuration(animationDuration);
@@ -197,40 +193,28 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                                 .setDuration(animationDuration);
 
                     }
-
-
-//                        if (mStatusBarScrimView != null) {
-//                            mStatusBarScrimView.setVisibility(
-//                                    showArtDetailChrome ? View.VISIBLE : View.GONE);
-//                            mStatusBarScrimView.animate()
-//                                    .alpha(visible ? 1f : 0f)
-//                                    .setDuration(200)
-//                                    .withEndAction(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            if (!visible) {
-//                                                mStatusBarScrimView.setVisibility(View.GONE);
-//                                            }
-//                                        }
-//                                    });
-//                        }
                 });
     }
 
     public void loadImageIntoView(String imageUrl) {
-        App.log(TAG, "in loadImageIntoView");
+        App.log(TAG, "in loadImageIntoView for url: " + imageUrl);
         /*
         * Load/set normal resolution image before highRes image has been loaded
         * */
         Glide.with(this)
                 .load(imageUrl)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // todo: look into cache starts
+                .thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT) // todo: look into cache starts
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                         App.log(TAG, "in onResourceReady normal resolution");
-                        loadingSpinner.setVisibility(View.GONE);
+                        mLoadingSpinner.setVisibility(View.GONE);
+                        if (highResImageSet) {
+                            App.logError(TAG, "!!!highResImage already set on imageView. Nop need to set lowRes");
+                            return;
+                        }
                         /*
                         * Only set normal resolution image when highRes has not been loaded/cached yet.
                         * */
@@ -255,12 +239,55 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                         imageZoomView.setScaleAndCenter(scale, pf);
                     }
                 });
+
+        if (shouldDownloadHRImages) {
+            if (mHighResImageUrl == null || mHighResImageUrl.isEmpty()) {
+                App.logError(TAG, "highResImage url issue: null or empty!");
+                return;
+            }
+            Glide.with(this)
+                    .load(mHighResImageUrl)
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT) // todo: look into cache starts
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                            App.log(TAG, "in onResourceReady high res resolution");
+                            highResImageSet = true; // cancels potential setting of lower res image back on image view
+                            mLoadingSpinner.setVisibility(View.GONE);
+
+                        /*
+                        * Only set normal resolution image when highRes has not been loaded/cached yet.
+                        * */
+                            /** When image is loaded set it to the imageZoomView either upscale it, preserving aspect ratio, when there is whitespace
+                             *  or downscale it so that either width or length of image fits screen size */
+                            mArtWorkBitmap = bitmap;
+                            imageZoomView.setImage(ImageSource.bitmap(mArtWorkBitmap));
+                            imageZoomView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+
+                            scale = (float) (ScreenUtils.getScreenHeightPx() + ScreenUtils.getNavigationBarHeightPx()) / (float) bitmap.getHeight();
+                            // todo adjust for when scale should be set according to width instead of height
+
+                            // Zoom settings
+                            float maxScaleFactor = 8f;
+                            imageZoomView.setMinScale(scale);
+                            imageZoomView.setMaxScale(maxScaleFactor * scale);
+                            imageZoomView.setDoubleTapZoomScale(scale * 4);
+                            imageZoomView.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
+
+                            // todo centering view not working as desired
+                            PointF pf = new PointF(0.5f, 0.5f);
+                            imageZoomView.setScaleAndCenter(scale, pf);
+                        }
+                    });
+        }
     }
 
     private void setOverflowMenu() {
         mOverflowMenu = new PopupMenu(this, mOverflowButton);
         mOverflowMenu.getMenu().clear();
         mOverflowMenu.inflate(R.menu.overflow_menu);
+        setMenuHighResItemTitle();
 
         mOverflowButton.setOnClickListener(v -> v.postDelayed(() -> {
             mOverflowMenu.show();
@@ -273,9 +300,40 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
                 case R.id.action_share_artwork:
                     new ShareArtworkTask(this, mArtWork);
                     return true;
+                case R.id.action_enable_highres_loading:
+                    App.logError(TAG, "in button click action_enable_highres_loading");
+                    if (shouldDownloadHRImages) {
+                        App.toast("Disabling downloading high resolution images");
+                    } else {
+                        App.toast("Enabling downloading high resolution images");
+                    }
+
+                    shouldDownloadHRImages = !shouldDownloadHRImages;
+                    AppPreferences.sharedInstance().setDownloadHighResImages(shouldDownloadHRImages);
+                    setMenuHighResItemTitle();
+
+
+                    return true;
+                default:
+                    App.logError(TAG, "Couldn't retreive id for overflow menu clicked. Id= " + menuItem.getItemId());
             }
             return false;
         });
+    }
+
+    private void setMenuHighResItemTitle() {
+        if (mOverflowMenu == null) {
+            String errorMessage = "mOverflowMenu==null";
+            App.logError(TAG, errorMessage);
+            return;
+        }
+        MenuItem HRItem = mOverflowMenu.getMenu().findItem(R.id.action_enable_highres_loading);
+        if (HRItem == null) {
+            App.logError(TAG, "item is NULL!!!");
+        } else {
+            String title = shouldDownloadHRImages ? getString(R.string.menu_disable_loading_highres) : getString(R.string.menu_enable_loading_highres);
+            HRItem.setTitle(title);
+        }
     }
 
     @Override
@@ -283,12 +341,6 @@ public class ArtWorkDetailViewActivity extends GenericActivity {
         super.onResume();
         App.log(TAG, "in onResume");
         hideUiBars();
-    }
-
-    @Override
-    protected void onDestroy() {
-        ButterKnife.unbind(this);
-        super.onDestroy();
     }
 
     @Override

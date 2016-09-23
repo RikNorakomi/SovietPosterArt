@@ -1,37 +1,29 @@
 package sovietPosterArt.utils;
 
 import android.util.Log;
-
-import com.crashlytics.android.Crashlytics;
+import android.widget.Toast;
 
 /**
  * Created by MEDION on 7-1-2016.
  */
 public class App {
 
-    private final static String PRE_TAG = "Soviet: ";
+    private static final String NORAKOMI_TAG = "NSPA: ";
 
     public static void log(String string) {
         Log.e("", string);
     }
 
     public static void log(String tag, String string) {
-        Log.v(PRE_TAG + tag, string);
+        Log.v(NORAKOMI_TAG + tag, string);
     }
 
     public static void logError(String tag, String string) {
-        Log.e(PRE_TAG + tag, string);
+        Log.e(NORAKOMI_TAG + tag, string);
     }
-
-    public static void logError(String tag, String msg, Throwable t) {
-        Log.e(PRE_TAG + tag, msg);
-        Crashlytics.logException(new Throwable(msg, t));
-    }
-
-
 
     public static void logCurrentMethod() {
-        Log.e(PRE_TAG, getCurrentMethodName());
+        Log.e("App", getCurrentMethodName());
     }
 
     public static String getCurrentMethodName() {
@@ -46,7 +38,15 @@ public class App {
                 + "method: " + Thread.currentThread().getStackTrace()[4].getMethodName() + "()";
     }
 
+    public static void toast(String string) {
+        Toast toast = Toast.makeText(AppContext.getContext(), string, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
+    public static void toastLong(String string) {
+        Toast toast = Toast.makeText(AppContext.getContext(), string, Toast.LENGTH_LONG);
+        toast.show();
+    }
 
 
 }
